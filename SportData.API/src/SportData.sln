@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportData.Services.Mapper",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportData.WebAPI.Infrastructure", "Web\SportData.WebAPI.Infrastructure\SportData.WebAPI.Infrastructure.csproj", "{87833C9B-4B7D-481B-AA51-BA364A30B1F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportData.Data.Crawlers", "Data\SportData.Data.Crawlers\SportData.Data.Crawlers.csproj", "{57778318-4A92-45A6-8DE8-E6D534BEEDA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportData.Data.Converters", "Data\SportData.Data.Converters\SportData.Data.Converters.csproj", "{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,14 @@ Global
 		{87833C9B-4B7D-481B-AA51-BA364A30B1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87833C9B-4B7D-481B-AA51-BA364A30B1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87833C9B-4B7D-481B-AA51-BA364A30B1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57778318-4A92-45A6-8DE8-E6D534BEEDA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57778318-4A92-45A6-8DE8-E6D534BEEDA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57778318-4A92-45A6-8DE8-E6D534BEEDA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57778318-4A92-45A6-8DE8-E6D534BEEDA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +111,8 @@ Global
 		{2997B5C7-22FB-46FC-A541-C45DF74F8F45} = {C580FDB3-888C-4BD2-BEAE-CAD5ECA14917}
 		{45A8779F-14BA-480D-92F8-56BC4070AB57} = {C580FDB3-888C-4BD2-BEAE-CAD5ECA14917}
 		{87833C9B-4B7D-481B-AA51-BA364A30B1F6} = {F4C15D63-EAFB-42C8-A4F0-6BE312EB36AE}
+		{57778318-4A92-45A6-8DE8-E6D534BEEDA9} = {7EE0255E-E0FA-44C6-8FCD-4FA377EC2770}
+		{FECEE80F-2198-497B-BE9A-51DFFBDF0DF8} = {7EE0255E-E0FA-44C6-8FCD-4FA377EC2770}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF19EAC8-82EB-4AA3-A02D-C2DB5BB4F7B8}
