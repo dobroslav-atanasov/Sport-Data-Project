@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 using SportData.Data.Common.Interfaces;
 
-public abstract class BaseEntity<TKey> : ICheckableEntity
+public abstract class BaseEntity<TKey> : ICreatableEntity
 {
     [Key]
     public TKey Id { get; set; }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using global::SportData.Data.Common.Interfaces;
 
 [Table("EventsVenues", Schema = "dbo")]
-public class EventVenue : ICheckableEntity, IDeletableEntity
+public class EventVenue : ICreatableEntity, IDeletableEntity
 {
     public int EventId { get; set; }
     public virtual Event Event { get; set; }

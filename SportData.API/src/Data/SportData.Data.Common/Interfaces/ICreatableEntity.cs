@@ -1,6 +1,6 @@
 ﻿namespace SportData.Data.Common.Interfaces;
 
-public interface ICheckableEntity
+public interface ICreatableEntity
 {
     DateTime CreatedOn { get; set; }
 

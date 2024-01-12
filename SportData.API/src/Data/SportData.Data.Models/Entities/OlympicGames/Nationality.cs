@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using global::SportData.Data.Common.Interfaces;
 
 [Table("Nationalities", Schema = "dbo")]
-public class Nationality : ICheckableEntity, IDeletableEntity
+public class Nationality : ICreatableEntity, IDeletableEntity
 {
     public Guid AthleteId { get; set; }
     public virtual Athlete Athlete { get; set; }
