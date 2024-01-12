@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /SportData.Angular
 /SportData.API/src/Data/SportData.Data/Migrations
+/SportData.API/src/Web/SportData.WebAPI/appsettings.json
