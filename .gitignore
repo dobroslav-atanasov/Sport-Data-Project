@@ -397,4 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /SportData.Angular
-/SportData.API/src/Data/SportData.Data/Migrations/CrawlerStorageDb
+/SportData.API/src/Data/SportData.Data/Migrations
