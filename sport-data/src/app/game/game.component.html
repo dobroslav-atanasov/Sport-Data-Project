@@ -1,0 +1,23 @@
+<!-- <input type="text" [(ngModel)]="search"> -->
+
+<!-- <div>
+    {{search}}
+</div> -->
+<ul>
+    <li *ngFor="let game of games">Game: {{game.title}}
+
+        <!-- <span [class.game-price]="shouldPriceBeRed" *ngIf="shouldShowComponent">Price: {{game.price}}</span> -->
+        <!-- <app-game-item [currentGame]="game"></app-game-item> -->
+        <app-game-item *ngIf="shouldShowComponent"></app-game-item>
+    </li>
+
+</ul>
+
+<!-- 
+<button (click)="changeColor()">
+    {{shouldPriceBeRed ? 'Change to black' : 'Change to red'}}
+</button> -->
+
+<button (click)="deleteComponent()">
+    Delete
+</button>
