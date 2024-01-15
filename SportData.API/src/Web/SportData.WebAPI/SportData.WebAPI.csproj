@@ -8,12 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Data\SportData.Data.Converters\SportData.Data.Converters.csproj" />
+    <ProjectReference Include="..\..\Data\SportData.Data.Crawlers\SportData.Data.Crawlers.csproj" />
+    <ProjectReference Include="..\SportData.WebAPI.Infrastructure\SportData.WebAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
