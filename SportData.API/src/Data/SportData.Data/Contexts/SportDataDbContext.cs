@@ -1,11 +1,12 @@
 ﻿namespace SportData.Data.Contexts;
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using SportData.Data.Common.Interfaces;
 using SportData.Data.Models.Entities.SportData;
 
-public class SportDataDbContext : DbContext
+public class SportDataDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public SportDataDbContext(DbContextOptions<SportDataDbContext> options)
         : base(options)

@@ -81,10 +81,6 @@ public class Program
             .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING))
             .Options;
 
-        var sportDataDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()
-            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING))
-            .Options;
-
         var olympicGamesDbOptions = new DbContextOptionsBuilder<OlympicGamesDbContext>()
             .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.OLYMPIC_GAMES_CONNECTION_STRING))
             .Options;
@@ -93,16 +89,9 @@ public class Program
         var dbContextFactory = new DbContextFactory(crawlerStorageDbOptions, olympicGamesDbOptions);
         services.AddSingleton<IDbContextFactory>(dbContextFactory);
 
-        // Databases
         services.AddDbContext<SportDataDbContext>(options =>
         {
             options.UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING));
-        });
-
-        services.AddDbContext<CrawlerStorageDbContext>(options =>
-        {
-            options.UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING));
-            //options.UseLazyLoadingProxies();
         });
 
         // Repositories
@@ -167,6 +156,12 @@ public class Program
 
     private static void Configure(WebApplication app)
     {
+        using (var serviceScope = app.Services.CreateScope())
+        {
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<SportDataDbContext>();
+            dbContext.Database.Migrate();
+        }
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
