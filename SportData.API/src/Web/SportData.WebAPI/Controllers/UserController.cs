@@ -1,8 +1,10 @@
 ﻿namespace SportData.WebAPI.Controllers;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using SportData.Data.Models.Entities.SportData;
 using SportData.Data.Models.Jwt;
 using SportData.Services.Interfaces;
 
@@ -10,10 +12,14 @@ using SportData.Services.Interfaces;
 public class UserController : BaseController
 {
     private readonly IJwtService jwtService;
+    private readonly UserManager<ApplicationUser> userManager;
+    private readonly RoleManager<ApplicationRole> roleManager;
 
-    public UserController(IJwtService jwtService)
+    public UserController(IJwtService jwtService, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
     {
         this.jwtService = jwtService;
+        this.userManager = userManager;
+        this.roleManager = roleManager;
     }
 
     [HttpPost]
@@ -28,6 +34,13 @@ public class UserController : BaseController
         }
 
         return this.Unauthorized();
+    }
+
+    public async Task<IActionResult> CreateUser()
+    {
+        //this.userManager.addr
+        //this.userManager.CreateAsync()
+        return this.Ok();
     }
 
     [HttpGet]
