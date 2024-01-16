@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportData.Data.Models.Jwt;
 using SportData.Services.Interfaces;
 
+[Authorize]
 public class UserController : BaseController
 {
     private readonly IJwtService jwtService;
@@ -31,7 +32,6 @@ public class UserController : BaseController
 
     [HttpGet]
     [Route("Test")]
-    [Authorize]
     public IActionResult Test()
     {
         return this.Ok("Hi");

@@ -31,23 +31,20 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        ConfigureServices(builder);
+        ConfigureServices(builder.Services, builder.Configuration);
         var app = builder.Build();
         Configure(app);
-
-        app.MapGet("/security/getMessage",
-() => "Hello World!").RequireAuthorization();
         app.Run();
     }
 
-    private static void ConfigureServices(WebApplicationBuilder builder)
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
 
         // JWT token
-        builder.Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,9 +53,9 @@ public class Program
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidAudience = configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = false,
@@ -66,106 +63,106 @@ public class Program
             };
         });
 
-        builder.Services.AddAuthorization();
+        services.AddAuthorization();
 
         // Log to file
-        builder.Services.AddLogging(config =>
+        services.AddLogging(config =>
         {
-            config.AddConfiguration(builder.Configuration.GetSection(AppGlobalConstants.LOGGING));
+            config.AddConfiguration(configuration.GetSection(AppGlobalConstants.LOGGING));
             config.AddConsole();
-            config.AddLog4Net(builder.Configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
+            config.AddLog4Net(configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
         });
 
         // Automapper
-        builder.Services.AddAutoMapper(typeof(OlympicGamesProfile));
+        services.AddAutoMapper(typeof(OlympicGamesProfile));
 
         // Databases options
         var crawlerStorageDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()
-            .UseSqlServer(builder.Configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING))
+            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING))
             .Options;
 
         var sportDataDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()
-            .UseSqlServer(builder.Configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING))
+            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING))
             .Options;
 
         var olympicGamesDbOptions = new DbContextOptionsBuilder<OlympicGamesDbContext>()
-            .UseSqlServer(builder.Configuration.GetConnectionString(AppGlobalConstants.OLYMPIC_GAMES_CONNECTION_STRING))
+            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.OLYMPIC_GAMES_CONNECTION_STRING))
             .Options;
 
         // Database factory
         var dbContextFactory = new DbContextFactory(crawlerStorageDbOptions, olympicGamesDbOptions);
-        builder.Services.AddSingleton<IDbContextFactory>(dbContextFactory);
+        services.AddSingleton<IDbContextFactory>(dbContextFactory);
 
         // Databases
-        builder.Services.AddDbContext<SportDataDbContext>(options =>
+        services.AddDbContext<SportDataDbContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING));
+            options.UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING));
         });
 
-        builder.Services.AddDbContext<CrawlerStorageDbContext>(options =>
+        services.AddDbContext<CrawlerStorageDbContext>(options =>
         {
-            options.UseSqlServer(builder.Configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING));
+            options.UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING));
             //options.UseLazyLoadingProxies();
         });
 
         // Repositories
-        builder.Services.AddScoped(typeof(SportDataRepository<>));
+        services.AddScoped(typeof(SportDataRepository<>));
 
         // Services
-        builder.Services.AddScoped<IZipService, ZipService>();
-        builder.Services.AddScoped<IRegExpService, RegExpService>();
-        builder.Services.AddScoped<IHttpService, HttpService>();
-        builder.Services.AddScoped<IMD5Hash, MD5Hash>();
-        builder.Services.AddScoped<INormalizeService, NormalizeService>();
-        builder.Services.AddScoped<IOlympediaService, OlympediaService>();
-        builder.Services.AddScoped<IDateService, DateService>();
-        builder.Services.AddTransient<IJwtService, JwtService>();
+        services.AddScoped<IZipService, ZipService>();
+        services.AddScoped<IRegExpService, RegExpService>();
+        services.AddScoped<IHttpService, HttpService>();
+        services.AddScoped<IMD5Hash, MD5Hash>();
+        services.AddScoped<INormalizeService, NormalizeService>();
+        services.AddScoped<IOlympediaService, OlympediaService>();
+        services.AddScoped<IDateService, DateService>();
+        services.AddTransient<IJwtService, JwtService>();
         //builder.Services.AddTransient<IUserService, UserService>();
 
         // Data services
-        builder.Services.AddScoped<IOperationsService, OperationsService>();
-        builder.Services.AddScoped<ICrawlersService, CrawlersService>();
-        builder.Services.AddScoped<IGroupsService, GroupsService>();
-        builder.Services.AddScoped<ILogsService, LogsService>();
-        builder.Services.AddScoped<IDataCacheService, DataCacheService>();
-        builder.Services.AddScoped<ICountriesService, CountriesService>();
-        builder.Services.AddScoped<INOCsService, NOCsService>();
-        builder.Services.AddScoped<ICitiesService, CitiesService>();
-        builder.Services.AddScoped<IGamesService, GamesService>();
-        builder.Services.AddScoped<IHostsService, HostsService>();
-        builder.Services.AddScoped<ISportsService, SportsService>();
-        builder.Services.AddScoped<IDisciplinesService, DisciplinesService>();
-        builder.Services.AddScoped<IVenuesService, VenuesService>();
-        builder.Services.AddScoped<IEventsService, EventsService>();
-        builder.Services.AddScoped<IEventVenueService, EventVenueService>();
-        builder.Services.AddScoped<IAthletesService, AthletesService>();
-        builder.Services.AddScoped<INationalitiesService, NationalitiesService>();
-        builder.Services.AddScoped<IParticipantsService, ParticipantsService>();
-        builder.Services.AddScoped<ITeamsService, TeamsService>();
-        builder.Services.AddScoped<ISquadsService, SquadsService>();
-        builder.Services.AddScoped<IResultsService, ResultsService>();
-        builder.Services.AddScoped<Services.Data.SportDataDb.Interfaces.ICountriesService, Services.Data.SportDataDb.CountriesService>();
+        services.AddScoped<IOperationsService, OperationsService>();
+        services.AddScoped<ICrawlersService, CrawlersService>();
+        services.AddScoped<IGroupsService, GroupsService>();
+        services.AddScoped<ILogsService, LogsService>();
+        services.AddScoped<IDataCacheService, DataCacheService>();
+        services.AddScoped<ICountriesService, CountriesService>();
+        services.AddScoped<INOCsService, NOCsService>();
+        services.AddScoped<ICitiesService, CitiesService>();
+        services.AddScoped<IGamesService, GamesService>();
+        services.AddScoped<IHostsService, HostsService>();
+        services.AddScoped<ISportsService, SportsService>();
+        services.AddScoped<IDisciplinesService, DisciplinesService>();
+        services.AddScoped<IVenuesService, VenuesService>();
+        services.AddScoped<IEventsService, EventsService>();
+        services.AddScoped<IEventVenueService, EventVenueService>();
+        services.AddScoped<IAthletesService, AthletesService>();
+        services.AddScoped<INationalitiesService, NationalitiesService>();
+        services.AddScoped<IParticipantsService, ParticipantsService>();
+        services.AddScoped<ITeamsService, TeamsService>();
+        services.AddScoped<ISquadsService, SquadsService>();
+        services.AddScoped<IResultsService, ResultsService>();
+        services.AddScoped<Services.Data.SportDataDb.Interfaces.ICountriesService, Services.Data.SportDataDb.CountriesService>();
 
         // Crawlers
-        builder.Services.AddTransient<CountryDataCrawler>();
-        builder.Services.AddTransient<NOCCrawler>();
-        builder.Services.AddTransient<GameCrawler>();
-        builder.Services.AddTransient<SportDisciplineCrawler>();
-        builder.Services.AddTransient<ResultCrawler>();
-        builder.Services.AddTransient<AthleteCrawler>();
-        builder.Services.AddTransient<VenueCrawler>();
+        services.AddTransient<CountryDataCrawler>();
+        services.AddTransient<NOCCrawler>();
+        services.AddTransient<GameCrawler>();
+        services.AddTransient<SportDisciplineCrawler>();
+        services.AddTransient<ResultCrawler>();
+        services.AddTransient<AthleteCrawler>();
+        services.AddTransient<VenueCrawler>();
 
         // Converters
-        builder.Services.AddScoped<CountryDataConverter>();
-        builder.Services.AddScoped<CountryConverter>();
-        builder.Services.AddScoped<NOCConverter>();
-        builder.Services.AddScoped<GameConverter>();
-        builder.Services.AddScoped<SportDisciplineConverter>();
-        builder.Services.AddScoped<VenueConverter>();
-        builder.Services.AddScoped<EventConverter>();
-        builder.Services.AddScoped<AthleteConverter>();
-        builder.Services.AddScoped<ParticipantConverter>();
-        builder.Services.AddScoped<ResultConverter>();
+        services.AddScoped<CountryDataConverter>();
+        services.AddScoped<CountryConverter>();
+        services.AddScoped<NOCConverter>();
+        services.AddScoped<GameConverter>();
+        services.AddScoped<SportDisciplineConverter>();
+        services.AddScoped<VenueConverter>();
+        services.AddScoped<EventConverter>();
+        services.AddScoped<AthleteConverter>();
+        services.AddScoped<ParticipantConverter>();
+        services.AddScoped<ResultConverter>();
     }
 
     private static void Configure(WebApplication app)
