@@ -2,8 +2,6 @@ namespace SportData.WebAPI;
 
 using System.Text;
 
-using Asp.Versioning;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +17,6 @@ using SportData.Data.Crawlers.Countries;
 using SportData.Data.Crawlers.Olympedia;
 using SportData.Data.Factories;
 using SportData.Data.Factories.Interfaces;
-using SportData.Data.Models.Jwt;
 using SportData.Data.Repositories;
 using SportData.Services;
 using SportData.Services.Data.CrawlerStorageDb;
@@ -37,6 +34,9 @@ public class Program
         ConfigureServices(builder);
         var app = builder.Build();
         Configure(app);
+
+        app.MapGet("/security/getMessage",
+() => "Hello World!").RequireAuthorization();
         app.Run();
     }
 
@@ -47,9 +47,6 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         // JWT token
-        var jwtOptions = builder.Configuration.GetRequiredSection("Jwt");
-        builder.Services.Configure<JwtOptions>(jwtOptions);
-
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,14 +54,11 @@ public class Program
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
-            var configurationKey = jwtOptions["Key"];
-            var key = Encoding.UTF8.GetBytes(configurationKey);
-
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidIssuer = jwtOptions["Issuer"],
-                ValidAudience = jwtOptions["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = false,
@@ -73,14 +67,6 @@ public class Program
         });
 
         builder.Services.AddAuthorization();
-
-        builder.Services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-            options.ReportApiVersions = true;
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        });
 
         // Log to file
         builder.Services.AddLogging(config =>
@@ -134,7 +120,7 @@ public class Program
         builder.Services.AddScoped<IOlympediaService, OlympediaService>();
         builder.Services.AddScoped<IDateService, DateService>();
         builder.Services.AddTransient<IJwtService, JwtService>();
-        builder.Services.AddTransient<IUserService, UserService>();
+        //builder.Services.AddTransient<IUserService, UserService>();
 
         // Data services
         builder.Services.AddScoped<IOperationsService, OperationsService>();
@@ -193,6 +179,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();

@@ -22,4 +22,11 @@ public class ConverterController : BaseController
         await this.countryDataConverter.ConvertAsync(inputModel.Name);
         return this.Ok();
     }
+
+    [HttpGet]
+    [Route("Get")]
+    public async Task<IActionResult> Get()
+    {
+        return this.Ok("Hi");
+    }
 }
