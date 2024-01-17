@@ -36,12 +36,12 @@ public class UserController : BaseController
         return this.Unauthorized();
     }
 
-    public async Task<IActionResult> CreateUser()
-    {
-        //this.userManager.addr
-        //this.userManager.CreateAsync()
-        return this.Ok();
-    }
+    //public async Task<IActionResult> CreateUser()
+    //{
+    //    //this.userManager.addr
+    //    //this.userManager.CreateAsync()
+    //    return this.Ok();
+    //}
 
     [HttpGet]
     [Route("Test")]

@@ -17,7 +17,9 @@ using SportData.Data.Crawlers.Countries;
 using SportData.Data.Crawlers.Olympedia;
 using SportData.Data.Factories;
 using SportData.Data.Factories.Interfaces;
+using SportData.Data.Models.Entities.SportData;
 using SportData.Data.Repositories;
+using SportData.Data.Seeders;
 using SportData.Services;
 using SportData.Services.Data.CrawlerStorageDb;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
@@ -72,6 +74,8 @@ public class Program
             config.AddConsole();
             config.AddLog4Net(configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
         });
+
+        services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<SportDataDbContext>();
 
         // Automapper
         services.AddAutoMapper(typeof(OlympicGamesProfile));
@@ -160,6 +164,8 @@ public class Program
         {
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<SportDataDbContext>();
             dbContext.Database.Migrate();
+
+            new SportDataDbSeeder().SeedAsync(serviceScope.ServiceProvider).GetAwaiter().GetResult();
         }
 
         // Configure the HTTP request pipeline.

@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\SportData.Data.Converters\SportData.Data.Converters.csproj" />
     <ProjectReference Include="..\..\Data\SportData.Data.Crawlers\SportData.Data.Crawlers.csproj" />
+    <ProjectReference Include="..\..\Data\SportData.Data.Seeders\SportData.Data.Seeders.csproj" />
     <ProjectReference Include="..\SportData.WebAPI.Infrastructure\SportData.WebAPI.Infrastructure.csproj" />
   </ItemGroup>
 
