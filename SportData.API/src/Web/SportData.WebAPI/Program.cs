@@ -3,6 +3,7 @@ namespace SportData.WebAPI;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +19,7 @@ using SportData.Data.Crawlers.Olympedia;
 using SportData.Data.Factories;
 using SportData.Data.Factories.Interfaces;
 using SportData.Data.Models.Entities.SportData;
+using SportData.Data.Options;
 using SportData.Data.Repositories;
 using SportData.Data.Seeders;
 using SportData.Services;
@@ -75,7 +77,10 @@ public class Program
             config.AddLog4Net(configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
         });
 
-        services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<SportDataDbContext>();
+        services.AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.SetIdentityOptions)
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<SportDataDbContext>()
+            .AddDefaultTokenProviders();
 
         // Automapper
         services.AddAutoMapper(typeof(OlympicGamesProfile));
