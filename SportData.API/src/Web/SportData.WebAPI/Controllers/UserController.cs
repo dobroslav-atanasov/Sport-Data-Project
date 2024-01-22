@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using SportData.Data.Models.Entities.SportData;
-using SportData.Data.Models.Jwt;
 using SportData.Services.Interfaces;
 
 [Authorize]
@@ -22,19 +21,19 @@ public class UserController : BaseController
         this.roleManager = roleManager;
     }
 
-    [HttpPost]
-    [AllowAnonymous]
-    [Route("CreateToken")]
-    public IActionResult CreateToken(User user)
-    {
-        if (user.Username == "dobri" && user.Password == "123")
-        {
-            var token = this.jwtService.GenerateToken(user);
-            return this.Ok(token);
-        }
+    //[HttpPost]
+    //[AllowAnonymous]
+    //[Route("CreateToken")]
+    //public IActionResult CreateToken(User user)
+    //{
+    //    if (user.Username == "dobri" && user.Password == "123")
+    //    {
+    //        var token = this.jwtService.GenerateToken(user);
+    //        return this.Ok(token);
+    //    }
 
-        return this.Unauthorized();
-    }
+    //    return this.Unauthorized();
+    //}
 
     //public async Task<IActionResult> CreateUser()
     //{
