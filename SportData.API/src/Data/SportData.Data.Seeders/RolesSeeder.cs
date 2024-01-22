@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 using SportData.Common.Constants;
-using SportData.Data.Contexts;
 using SportData.Data.Models.Entities.SportData;
 using SportData.Data.Seeders.Interfaces;
 
@@ -14,7 +13,6 @@ public class RolesSeeder : ISeeder
 {
     public async Task SeedAsync(IServiceProvider services)
     {
-        var dbContext = services.GetService<SportDataDbContext>();
         var roleManager = services.GetService<RoleManager<ApplicationRole>>();
 
         await SeedRoleAsync(roleManager, ApplicationRoles.SUPERADMIN);
