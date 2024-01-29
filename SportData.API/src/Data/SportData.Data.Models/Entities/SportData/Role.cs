@@ -6,7 +6,7 @@ using global::SportData.Data.Common.Interfaces;
 
 using Microsoft.AspNetCore.Identity;
 
-public class ApplicationRole : IdentityRole, ICreatableEntity
+public class Role : IdentityRole, ICreatableEntity
 {
     public DateTime CreatedOn { get; set; }
 
