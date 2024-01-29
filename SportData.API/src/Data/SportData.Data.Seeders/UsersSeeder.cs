@@ -14,22 +14,20 @@ public class UsersSeeder : ISeeder
 {
     public async Task SeedAsync(IServiceProvider services)
     {
-        var userManager = services.GetService<UserManager<ApplicationUser>>();
-        var roleManager = services.GetService<RoleManager<ApplicationRole>>();
+        var userManager = services.GetService<UserManager<User>>();
 
-        await this.SeedUserAsync(userManager, roleManager, "dobriSuperadmin", "1234", "dobriSuperadmin@sportData.com", ApplicationRoles.SUPERADMIN);
-        await this.SeedUserAsync(userManager, roleManager, "dobriAdmin", "1234", "dobriAdmin@sportData.com", ApplicationRoles.ADMIN);
-        await this.SeedUserAsync(userManager, roleManager, "dobriEditor", "1234", "dobriEditor@sportData.com", ApplicationRoles.EDITOR);
-        await this.SeedUserAsync(userManager, roleManager, "dobriUser", "1234", "dobriUser@sportData.com", ApplicationRoles.USER);
+        await this.SeedUserAsync(userManager, "dobriSuperadmin", "1234", "dobriSuperadmin@sportData.com", [ApplicationRoles.SUPERADMIN, ApplicationRoles.ADMIN, ApplicationRoles.EDITOR, ApplicationRoles.USER]);
+        await this.SeedUserAsync(userManager, "dobriAdmin", "1234", "dobriAdmin@sportData.com", [ApplicationRoles.ADMIN, ApplicationRoles.EDITOR, ApplicationRoles.USER]);
+        await this.SeedUserAsync(userManager, "dobriEditor", "1234", "dobriEditor@sportData.com", [ApplicationRoles.EDITOR, ApplicationRoles.USER]);
+        await this.SeedUserAsync(userManager, "dobriUser", "1234", "dobriUser@sportData.com", [ApplicationRoles.USER]);
     }
 
-    private async Task SeedUserAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, string username, string password, string email, string roleName)
+    private async Task SeedUserAsync(UserManager<User> userManager, string username, string password, string email, List<string> roles)
     {
         var user = await userManager.FindByNameAsync(username);
         if (user == null)
         {
-            var role = await roleManager.FindByNameAsync(roleName);
-            user = new ApplicationUser
+            user = new User
             {
                 UserName = username,
                 Email = email,
@@ -42,7 +40,10 @@ public class UsersSeeder : ISeeder
                 throw new Exception(string.Join(Environment.NewLine, result.Errors.Select(e => e.Description)));
             }
 
-            await userManager.AddToRoleAsync(user, roleName);
+            foreach (var role in roles)
+            {
+                await userManager.AddToRoleAsync(user, role);
+            }
         }
     }
 }

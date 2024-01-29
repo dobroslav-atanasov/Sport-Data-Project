@@ -1,6 +1,11 @@
 namespace SportData.WebAPI.Controllers;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using SportData.Common.Constants;
+
+[Authorize(Roles = ApplicationRoles.ADMIN)]
 public class WeatherForecastController : BaseController
 {
     private static readonly string[] Summaries = new[]
@@ -15,9 +20,12 @@ public class WeatherForecastController : BaseController
         _logger = logger;
     }
 
+    [AllowAnonymous]
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
+        var asd = this.HttpContext.Items["email"];
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

@@ -2,12 +2,15 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-using SportData.Data.Models.Jwt;
+using SportData.Data.Models.Authentication;
+using SportData.Data.Models.Entities.SportData;
 using SportData.Services.Interfaces;
 
 public class JwtService : IJwtService
@@ -19,32 +22,66 @@ public class JwtService : IJwtService
         this.configuration = configuration;
     }
 
-    public string GenerateToken(User user)
+    public string GenerateRefreshToken()
     {
-        var issuer = this.configuration["Jwt:Issuer"];
-        var audience = this.configuration["Jwt:Audience"];
-        var key = Encoding.ASCII.GetBytes(this.configuration["Jwt:Key"]);
+        var number = new byte[64];
+        using var range = RandomNumberGenerator.Create();
+        range.GetBytes(number);
+        var refreshToken = Convert.ToBase64String(number);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+        return refreshToken;
+    }
+
+    public TokenModel GenerateToken(User user, IList<string> roles)
+    {
+        var claims = new List<Claim>
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            }),
-            Expires = DateTime.UtcNow.AddMinutes(5),
-            Issuer = issuer,
-            Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            new(ClaimTypes.Name, user.UserName),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Email, user.Email),
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var jwtToken = tokenHandler.WriteToken(token);
-        var stringToken = tokenHandler.WriteToken(token);
+        foreach (var role in roles)
+        {
+            claims.Add(new(ClaimTypes.Role, role));
+        }
 
-        return stringToken;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));
+
+        var token = new JwtSecurityToken(
+            issuer: this.configuration["Jwt:Issuer"],
+            audience: this.configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(int.Parse(this.configuration["Jwt:TokenValidityInMinutes"])),
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+
+        return new TokenModel
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+            Expiration = token.ValidTo,
+        };
+    }
+
+    public ClaimsPrincipal ValidateToken(string token)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));
+
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = this.configuration["Jwt:Issuer"],
+                ValidAudience = this.configuration["Jwt:Audience"],
+                IssuerSigningKey = key
+            }, out SecurityToken validatedToken);
+
+            return claimsPrincipal;
+        }
+        catch (Exception ex)
+        {
+            throw new BadHttpRequestException("Invalid token!");
+        }
     }
 }

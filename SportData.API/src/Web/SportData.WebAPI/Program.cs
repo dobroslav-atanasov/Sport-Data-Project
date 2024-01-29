@@ -3,6 +3,7 @@ namespace SportData.WebAPI;
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ using SportData.Services.Data.OlympicGamesDb;
 using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 using SportData.Services.Mapper.Profiles;
+using SportData.WebAPI.Infrastructure.Exceptions;
+using SportData.WebAPI.Infrastructure.Middlewares;
 
 public class Program
 {
@@ -52,9 +55,10 @@ public class Program
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidIssuer = configuration["Jwt:Issuer"],
@@ -62,12 +66,18 @@ public class Program
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true,
             };
-        });
+        }).AddBearerToken();
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build());
+
+            options.DefaultPolicy = options.GetPolicy("Bearer");
+        });
 
         // Log to file
         services.AddLogging(config =>
@@ -77,8 +87,8 @@ public class Program
             config.AddLog4Net(configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
         });
 
-        services.AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.SetIdentityOptions)
-            .AddRoles<ApplicationRole>()
+        services.AddIdentity<User, Role>(IdentityOptionsProvider.SetIdentityOptions)
+            .AddRoles<Role>()
             .AddEntityFrameworkStores<SportDataDbContext>()
             .AddDefaultTokenProviders();
 
@@ -106,6 +116,13 @@ public class Program
         // Repositories
         services.AddScoped(typeof(SportDataRepository<>));
 
+        // Middlewares
+        services.AddTransient<JwtMiddleware>();
+        services.AddExceptionHandler<BadRequestExceptionHandler>();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
+        //services.AddTransient<ExceptionHandlerMiddleware>();
+
         // Services
         services.AddScoped<IZipService, ZipService>();
         services.AddScoped<IRegExpService, RegExpService>();
@@ -114,7 +131,7 @@ public class Program
         services.AddScoped<INormalizeService, NormalizeService>();
         services.AddScoped<IOlympediaService, OlympediaService>();
         services.AddScoped<IDateService, DateService>();
-        services.AddTransient<IJwtService, JwtService>();
+        services.AddScoped<IJwtService, JwtService>();
         //builder.Services.AddTransient<IUserService, UserService>();
 
         // Data services
@@ -173,6 +190,8 @@ public class Program
             new SportDataDbSeeder().SeedAsync(serviceScope.ServiceProvider).GetAwaiter().GetResult();
         }
 
+        app.UseExceptionHandler();
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -182,10 +201,15 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseRouting();
+
+        //app.UseMiddleware<ExceptionHandlerMiddleware>();
+        app.UseMiddleware<JwtMiddleware>();
+
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllers();
+        app.MapControllers().RequireAuthorization();
 
         app.Run();
     }

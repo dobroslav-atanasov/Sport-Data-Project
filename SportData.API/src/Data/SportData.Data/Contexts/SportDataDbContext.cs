@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SportData.Data.Common.Interfaces;
 using SportData.Data.Models.Entities.SportData;
 
-public class SportDataDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+public class SportDataDbContext : IdentityDbContext<User, Role, string>
 {
     public SportDataDbContext(DbContextOptions<SportDataDbContext> options)
         : base(options)

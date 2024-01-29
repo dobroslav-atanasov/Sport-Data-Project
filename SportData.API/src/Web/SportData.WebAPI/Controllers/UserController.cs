@@ -11,10 +11,10 @@ using SportData.Services.Interfaces;
 public class UserController : BaseController
 {
     private readonly IJwtService jwtService;
-    private readonly UserManager<ApplicationUser> userManager;
-    private readonly RoleManager<ApplicationRole> roleManager;
+    private readonly UserManager<User> userManager;
+    private readonly RoleManager<Role> roleManager;
 
-    public UserController(IJwtService jwtService, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    public UserController(IJwtService jwtService, UserManager<User> userManager, RoleManager<Role> roleManager)
     {
         this.jwtService = jwtService;
         this.userManager = userManager;
