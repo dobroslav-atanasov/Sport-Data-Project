@@ -1,5 +1,6 @@
 ﻿namespace SportData.WebAPI.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using SportData.Data.Models.Authentication;
 using SportData.Data.Models.Entities.SportData;
 using SportData.Services.Interfaces;
 
+[AllowAnonymous]
 public class AuthenticateController : BaseController
 {
     private readonly UserManager<User> userManager;
@@ -41,6 +43,9 @@ public class AuthenticateController : BaseController
             Email = input.Email,
             UserName = input.Username,
             SecurityStamp = Guid.NewGuid().ToString(),
+            FirstName = input.FirstName,
+            LastName = input.LastName,
+            BirthDate = input.BirthDate
         };
 
         var result = await this.userManager.CreateAsync(user, input.Password);

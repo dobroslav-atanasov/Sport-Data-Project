@@ -13,4 +13,10 @@ public class RegisterModel
     [EmailAddress]
     [Required(ErrorMessage = "Email is required!")]
     public string Email { get; set; }
+
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public DateTime? BirthDate { get; set; }
 }

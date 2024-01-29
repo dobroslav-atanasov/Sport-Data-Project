@@ -12,7 +12,7 @@ public class User : IdentityUser, ICreatableEntity
 
     public string LastName { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     public string PhotoUrl { get; set; }
 

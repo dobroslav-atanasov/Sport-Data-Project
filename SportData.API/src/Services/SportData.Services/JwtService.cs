@@ -39,6 +39,8 @@ public class JwtService : IJwtService
             new(ClaimTypes.Name, user.UserName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Email, user.Email),
+            //new(ClaimTypes.DateOfBirth, user.BirthDate.HasValue ? user.BirthDate.Value.ToString("dd.MM.yyyy") : null),
+            //new(ClaimTypes.Surname, user.LastName),
         };
 
         foreach (var role in roles)
