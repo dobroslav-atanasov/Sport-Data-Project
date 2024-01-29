@@ -192,22 +192,20 @@ public class Program
 
         app.UseExceptionHandler();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        //app.UseMiddleware<GlobalRoutePrefixMiddleware>("/api");
 
         app.UseHttpsRedirection();
-        //app.UsePathBase(new PathString("/appapi"));
+
         app.UseRouting();
 
-        //app.UseMiddleware<ExceptionHandlerMiddleware>();
         app.UseMiddleware<JwtMiddleware>();
 
         app.UseAuthentication();
+
         app.UseAuthorization();
 
         app.MapControllers().RequireAuthorization();
