@@ -26,8 +26,6 @@ public class ExceptionHandlerMiddleware : IMiddleware
             var traceId = Guid.NewGuid();
             this.logger.LogError($"Error occure while processing the request, TraceId : {traceId}, Message : {ex.Message}, StackTrace: {ex.StackTrace}");
 
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
             var problemDetails = new ProblemDetails
             {
                 Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
@@ -37,6 +35,7 @@ public class ExceptionHandlerMiddleware : IMiddleware
                 Detail = $"Internal server error occured, traceId : {traceId}",
             };
 
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }

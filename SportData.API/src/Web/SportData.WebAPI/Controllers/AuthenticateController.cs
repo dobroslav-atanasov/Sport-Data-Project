@@ -72,7 +72,7 @@ public class AuthenticateController : BaseController
             token.RefreshToken = refreshToken;
 
             user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(int.Parse(this.configuration["Jwt:RefreshTokenValidityInDays"]));
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(int.Parse(this.configuration[GlobalConstants.JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS]));
 
             await this.userManager.UpdateAsync(user);
 

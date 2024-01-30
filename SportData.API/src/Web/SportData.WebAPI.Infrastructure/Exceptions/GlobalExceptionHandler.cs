@@ -20,28 +20,35 @@ public class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        this.logger.LogError(exception, $"Exception occured");
+        var traceId = Guid.NewGuid();
+        this.logger.LogError($"Error occure while processing the request, TraceId : {traceId}, Message : {exception.Message}, StackTrace: {exception.StackTrace}");
 
         var problemDetails = new ProblemDetails
         {
-            Detail = exception.Message
+            Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
+            Title = "Internal Server Error",
+            Status = StatusCodes.Status500InternalServerError,
+            Instance = httpContext.Request.Path,
+            Detail = $"Internal server error occured, traceId : {traceId}",
         };
 
-        switch (exception)
-        {
-            case BadHttpRequestException:
-                problemDetails.Status = StatusCodes.Status400BadRequest;
-                problemDetails.Title = "Bad Request";
-                break;
-            default:
-                problemDetails.Status = StatusCodes.Status500InternalServerError;
-                problemDetails.Title = "Internal Server Error";
-                break;
-        }
-
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
-
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+
+        //switch (exception)
+        //{
+        //    case BadHttpRequestException:
+        //        problemDetails.Status = StatusCodes.Status400BadRequest;
+        //        problemDetails.Title = "Bad Request";
+        //        break;
+        //    default:
+        //        problemDetails.Status = StatusCodes.Status500InternalServerError;
+        //        problemDetails.Title = "Internal Server Error";
+        //        break;
+        //}
+
+        //httpContext.Response.StatusCode = problemDetails.Status.Value;
+        //await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }
