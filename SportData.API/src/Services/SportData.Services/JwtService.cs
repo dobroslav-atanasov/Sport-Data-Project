@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
+using SportData.Common.Constants;
 using SportData.Data.Models.Authentication;
 using SportData.Data.Models.Entities.SportData;
 using SportData.Services.Interfaces;
@@ -48,13 +49,13 @@ public class JwtService : IJwtService
             claims.Add(new(ClaimTypes.Role, role));
         }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration[GlobalConstants.JWT_KEY]));
 
         var token = new JwtSecurityToken(
-            issuer: this.configuration["Jwt:Issuer"],
-            audience: this.configuration["Jwt:Audience"],
+            issuer: this.configuration[GlobalConstants.JWT_ISSUER],
+            audience: this.configuration[GlobalConstants.JWT_AUDIENCE],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(int.Parse(this.configuration["Jwt:TokenValidityInMinutes"])),
+            expires: DateTime.UtcNow.AddMinutes(int.Parse(this.configuration[GlobalConstants.JWT_TOKEN_VALIDITY_IN_MINUTES])),
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
 
         return new TokenModel
@@ -66,7 +67,7 @@ public class JwtService : IJwtService
 
     public ClaimsPrincipal ValidateToken(string token)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration[GlobalConstants.JWT_KEY]));
 
         try
         {
@@ -74,8 +75,8 @@ public class JwtService : IJwtService
             var claimsPrincipal = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = this.configuration["Jwt:Issuer"],
-                ValidAudience = this.configuration["Jwt:Audience"],
+                ValidIssuer = this.configuration[GlobalConstants.JWT_ISSUER],
+                ValidAudience = this.configuration[GlobalConstants.JWT_AUDIENCE],
                 IssuerSigningKey = key
             }, out SecurityToken validatedToken);
 
