@@ -61,9 +61,9 @@ public class Program
             options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidIssuer = configuration["Jwt:Issuer"],
-                ValidAudience = configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                ValidIssuer = configuration[GlobalConstants.JWT_ISSUER],
+                ValidAudience = configuration[GlobalConstants.JWT_AUDIENCE],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[GlobalConstants.JWT_KEY])),
                 ValidateIssuer = true,
                 ValidateAudience = true,
             };
@@ -71,22 +71,23 @@ public class Program
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+            options.AddPolicy(GlobalConstants.BEARER, new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build());
 
-            options.DefaultPolicy = options.GetPolicy("Bearer");
+            options.DefaultPolicy = options.GetPolicy(GlobalConstants.BEARER);
         });
 
         // Log to file
         services.AddLogging(config =>
         {
-            config.AddConfiguration(configuration.GetSection(AppGlobalConstants.LOGGING));
+            config.AddConfiguration(configuration.GetSection(GlobalConstants.LOGGING));
             config.AddConsole();
-            config.AddLog4Net(configuration.GetSection(AppGlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
+            config.AddLog4Net(configuration.GetSection(GlobalConstants.LOG4NET_CORE).Get<Log4NetProviderOptions>());
         });
 
+        // Identity
         services.AddIdentity<User, Role>(IdentityOptionsProvider.SetIdentityOptions)
             .AddRoles<Role>()
             .AddEntityFrameworkStores<SportDataDbContext>()
@@ -97,11 +98,11 @@ public class Program
 
         // Databases options
         var crawlerStorageDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()
-            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING))
+            .UseSqlServer(configuration.GetConnectionString(GlobalConstants.CRAWLER_STORAGE_CONNECTION_STRING))
             .Options;
 
         var olympicGamesDbOptions = new DbContextOptionsBuilder<OlympicGamesDbContext>()
-            .UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.OLYMPIC_GAMES_CONNECTION_STRING))
+            .UseSqlServer(configuration.GetConnectionString(GlobalConstants.OLYMPIC_GAMES_CONNECTION_STRING))
             .Options;
 
         // Database factory
@@ -110,7 +111,7 @@ public class Program
 
         services.AddDbContext<SportDataDbContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString(AppGlobalConstants.SPORT_DATA_CONNECTION_STRING));
+            options.UseSqlServer(configuration.GetConnectionString(GlobalConstants.SPORT_DATA_CONNECTION_STRING));
         });
 
         // Repositories
@@ -126,13 +127,80 @@ public class Program
         // CORS
         services.AddCors(options =>
         {
-            options.AddPolicy(AppGlobalConstants.API_CORS, policy =>
+            options.AddPolicy(GlobalConstants.API_CORS, policy =>
             {
-                var allowedOrigins = configuration.GetSection(AppGlobalConstants.ALLOWED_ORIGINS).Get<string[]>();
+                var allowedOrigins = configuration.GetSection(GlobalConstants.ALLOWED_ORIGINS).Get<string[]>();
                 policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
             });
         });
 
+        RegisterServices(services);
+        RegisterCrawlers(services);
+        RegisterConverters(services);
+    }
+
+    private static void Configure(WebApplication app)
+    {
+        app.UseExceptionHandler();
+
+        using (var serviceScope = app.Services.CreateScope())
+        {
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<SportDataDbContext>();
+            dbContext.Database.Migrate();
+
+            new SportDataDbSeeder().SeedAsync(serviceScope.ServiceProvider).GetAwaiter().GetResult();
+        }
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseMiddleware<JwtMiddleware>();
+
+        app.UseCors(GlobalConstants.API_CORS);
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
+
+        app.MapControllers().RequireAuthorization();
+
+        app.Run();
+    }
+
+    private static void RegisterConverters(IServiceCollection services)
+    {
+        services.AddScoped<CountryDataConverter>();
+        services.AddScoped<CountryConverter>();
+        services.AddScoped<NOCConverter>();
+        services.AddScoped<GameConverter>();
+        services.AddScoped<SportDisciplineConverter>();
+        services.AddScoped<VenueConverter>();
+        services.AddScoped<EventConverter>();
+        services.AddScoped<AthleteConverter>();
+        services.AddScoped<ParticipantConverter>();
+        services.AddScoped<ResultConverter>();
+    }
+
+    private static void RegisterCrawlers(IServiceCollection services)
+    {
+        services.AddTransient<CountryDataCrawler>();
+        services.AddTransient<NOCCrawler>();
+        services.AddTransient<GameCrawler>();
+        services.AddTransient<SportDisciplineCrawler>();
+        services.AddTransient<ResultCrawler>();
+        services.AddTransient<AthleteCrawler>();
+        services.AddTransient<VenueCrawler>();
+    }
+
+    private static void RegisterServices(IServiceCollection services)
+    {
         // Services
         services.AddScoped<IZipService, ZipService>();
         services.AddScoped<IRegExpService, RegExpService>();
@@ -166,61 +234,5 @@ public class Program
         services.AddScoped<ISquadsService, SquadsService>();
         services.AddScoped<IResultsService, ResultsService>();
         services.AddScoped<Services.Data.SportDataDb.Interfaces.ICountriesService, Services.Data.SportDataDb.CountriesService>();
-
-        // Crawlers
-        services.AddTransient<CountryDataCrawler>();
-        services.AddTransient<NOCCrawler>();
-        services.AddTransient<GameCrawler>();
-        services.AddTransient<SportDisciplineCrawler>();
-        services.AddTransient<ResultCrawler>();
-        services.AddTransient<AthleteCrawler>();
-        services.AddTransient<VenueCrawler>();
-
-        // Converters
-        services.AddScoped<CountryDataConverter>();
-        services.AddScoped<CountryConverter>();
-        services.AddScoped<NOCConverter>();
-        services.AddScoped<GameConverter>();
-        services.AddScoped<SportDisciplineConverter>();
-        services.AddScoped<VenueConverter>();
-        services.AddScoped<EventConverter>();
-        services.AddScoped<AthleteConverter>();
-        services.AddScoped<ParticipantConverter>();
-        services.AddScoped<ResultConverter>();
-    }
-
-    private static void Configure(WebApplication app)
-    {
-        using (var serviceScope = app.Services.CreateScope())
-        {
-            var dbContext = serviceScope.ServiceProvider.GetRequiredService<SportDataDbContext>();
-            dbContext.Database.Migrate();
-
-            new SportDataDbSeeder().SeedAsync(serviceScope.ServiceProvider).GetAwaiter().GetResult();
-        }
-
-        app.UseExceptionHandler();
-
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseRouting();
-
-        app.UseMiddleware<JwtMiddleware>();
-
-        app.UseCors(AppGlobalConstants.API_CORS);
-
-        app.UseAuthentication();
-
-        app.UseAuthorization();
-
-        app.MapControllers().RequireAuthorization();
-
-        app.Run();
     }
 }
