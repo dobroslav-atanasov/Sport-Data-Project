@@ -18,4 +18,6 @@ public static class AppGlobalConstants
     public const string JWT_AUDIENCE = "JWT:Audience";
     public const string JWT_SUBJECT = "JWT:Subject";
 
+    public const string ALLOWED_ORIGINS = "AllowedOrigins";
+    public const string API_CORS = "ApiCors";
 }

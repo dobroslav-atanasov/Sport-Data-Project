@@ -123,6 +123,16 @@ public class Program
         services.AddProblemDetails();
         //services.AddTransient<ExceptionHandlerMiddleware>();
 
+        // CORS
+        services.AddCors(options =>
+        {
+            options.AddPolicy(AppGlobalConstants.API_CORS, policy =>
+            {
+                var allowedOrigins = configuration.GetSection(AppGlobalConstants.ALLOWED_ORIGINS).Get<string[]>();
+                policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+            });
+        });
+
         // Services
         services.AddScoped<IZipService, ZipService>();
         services.AddScoped<IRegExpService, RegExpService>();
@@ -132,7 +142,6 @@ public class Program
         services.AddScoped<IOlympediaService, OlympediaService>();
         services.AddScoped<IDateService, DateService>();
         services.AddScoped<IJwtService, JwtService>();
-        //builder.Services.AddTransient<IUserService, UserService>();
 
         // Data services
         services.AddScoped<IOperationsService, OperationsService>();
@@ -203,6 +212,8 @@ public class Program
         app.UseRouting();
 
         app.UseMiddleware<JwtMiddleware>();
+
+        app.UseCors(AppGlobalConstants.API_CORS);
 
         app.UseAuthentication();
 
