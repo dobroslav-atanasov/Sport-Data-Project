@@ -1,6 +1,6 @@
 ﻿namespace SportData.Common.Constants;
 
-public static class AppGlobalConstants
+public static class GlobalConstants
 {
     public const string LOGGING = "Logging";
     public const string LOG4NET_CORE = "Log4NetCore";
@@ -13,11 +13,13 @@ public static class AppGlobalConstants
 
     public const string AUTOMAPPER_MODELS_ASSEMBLY = "SportData.Data.Models";
 
-    public const string JWT_SECRET = "JWT:Secret";
-    public const string JWT_ISSUER = "JWT:Issuer";
-    public const string JWT_AUDIENCE = "JWT:Audience";
-    public const string JWT_SUBJECT = "JWT:Subject";
+    public const string JWT_KEY = "Jwt:Key";
+    public const string JWT_ISSUER = "Jwt:Issuer";
+    public const string JWT_AUDIENCE = "Jwt:Audience";
+    public const string JWT_TOKEN_VALIDITY_IN_MINUTES = "Jwt:TokenValidityInMinutes";
+    public const string JWT_REFRESH_TOKEN_VALIDITY_IN_DAYS = "Jwt:RefreshTokenValidityInDays";
 
     public const string ALLOWED_ORIGINS = "AllowedOrigins";
     public const string API_CORS = "ApiCors";
+    public const string BEARER = "Bearer";
 }
