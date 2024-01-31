@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\SportData.Common.Exceptions\SportData.Common.Exceptions.csproj" />
     <ProjectReference Include="..\..\Data\SportData.Data.Models\SportData.Data.Models.csproj" />
     <ProjectReference Include="..\..\Services\SportData.Services\SportData.Services.csproj" />
   </ItemGroup>
