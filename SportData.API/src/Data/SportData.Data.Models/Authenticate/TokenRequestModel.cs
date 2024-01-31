@@ -1,6 +1,6 @@
-﻿namespace SportData.Data.Models.Authentication;
+﻿namespace SportData.Data.Models.Authenticate;
 
-public class TokenInputModel
+public class TokenRequestModel
 {
     public string AccessToken { get; set; }
 

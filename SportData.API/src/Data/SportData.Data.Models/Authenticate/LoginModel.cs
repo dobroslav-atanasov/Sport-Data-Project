@@ -1,4 +1,4 @@
-﻿namespace SportData.Data.Models.Authentication;
+﻿namespace SportData.Data.Models.Authenticate;
 
 using System.ComponentModel.DataAnnotations;
 
