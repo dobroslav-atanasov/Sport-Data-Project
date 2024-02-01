@@ -1,5 +1,0 @@
-<button (click)="changeAllToCompleted()">Mark all as completed</button>
-
-<div *ngFor="let todoItem of todos">
-    <sd-todo-item [todo]="todoItem" (changeCompleteState)="handleStateChange($event)"></sd-todo-item>
-</div>
