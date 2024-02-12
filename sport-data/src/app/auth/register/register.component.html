@@ -1,0 +1,35 @@
+<div class="flex justify-content-center flex-wrap align-items-center h-full">
+    <form [formGroup]="registerForm">
+        <p-card header="Register" [style]="{width: '360px'}">
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" type="text" class="w-full" name="username" placeholder="Username"
+                    formControlName="username" pInputText>
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="text" class="w-full" name="email" placeholder="Email" formControlName="email"
+                    pInputText>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <p-password id="password" type="password" class="w-full" name="password" placeholder="Password"
+                    styleClass="p-password" formControlName="password" [style]="{'width':'100%'}"
+                    [inputStyle]="{'width':'100%'}" [toggleMask]="true"></p-password>
+            </div>
+
+            <div class="field">
+                <label for="confirmPassword">Confirm Password</label>
+                <input id="confirmPassword" type="password" class="w-full" name="confirmPassword" placeholder="Repeat Password" pPassword [feedback]="false">
+            </div>
+
+            <p-button label="Register" styleClass="w-full"></p-button>
+
+            <div class="mt-3">
+                Already a member? <a routerLink="/auth/login">Login</a>
+            </div>
+        </p-card>
+    </form>
+</div>
