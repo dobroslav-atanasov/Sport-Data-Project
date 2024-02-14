@@ -119,10 +119,8 @@ public class Program
 
         // Middlewares
         services.AddTransient<JwtMiddleware>();
-        services.AddExceptionHandler<BadRequestExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        //services.AddTransient<ExceptionHandlerMiddleware>();
 
         // CORS
         services.AddCors(options =>
@@ -157,13 +155,14 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
 
         app.UseRouting();
 
         app.UseMiddleware<JwtMiddleware>();
 
         app.UseCors(GlobalConstants.API_CORS);
+
+        app.UseHttpsRedirection();
 
         app.UseAuthentication();
 
