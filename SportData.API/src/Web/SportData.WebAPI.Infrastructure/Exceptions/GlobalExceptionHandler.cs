@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using SportData.Common.Exceptions;
+
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> logger;
@@ -32,23 +34,20 @@ public class GlobalExceptionHandler : IExceptionHandler
             Detail = $"Internal server error occured, traceId : {traceId}",
         };
 
-        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        switch (exception)
+        {
+            case BadRequestException:
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Title = "Bad Request";
+                break;
+            case NotFoundException:
+                problemDetails.Status = StatusCodes.Status404NotFound;
+                problemDetails.Title = "Not Found";
+                break;
+        }
+
+        httpContext.Response.StatusCode = problemDetails.Status.Value;
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-
-        //switch (exception)
-        //{
-        //    case BadHttpRequestException:
-        //        problemDetails.Status = StatusCodes.Status400BadRequest;
-        //        problemDetails.Title = "Bad Request";
-        //        break;
-        //    default:
-        //        problemDetails.Status = StatusCodes.Status500InternalServerError;
-        //        problemDetails.Title = "Internal Server Error";
-        //        break;
-        //}
-
-        //httpContext.Response.StatusCode = problemDetails.Status.Value;
-        //await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }
