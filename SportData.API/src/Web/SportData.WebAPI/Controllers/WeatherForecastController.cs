@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using SportData.Common.Constants;
 
-[Authorize(Roles = ApplicationRoles.ADMIN)]
+[Authorize(Roles = Roles.ADMIN)]
 public class WeatherForecastController : BaseController
 {
     private static readonly string[] Summaries = new[]
