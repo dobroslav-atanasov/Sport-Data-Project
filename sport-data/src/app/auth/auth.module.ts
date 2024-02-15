@@ -9,11 +9,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
+import { HttpClientModule } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +26,11 @@ import { ButtonModule } from 'primeng/button';
     ReactiveFormsModule,
     PasswordModule,
     CardModule,
-    ButtonModule
+    ButtonModule,
+    HttpClientModule,
+  ],
+  providers: [
+    MessageService
   ]
 })
 
