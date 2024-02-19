@@ -7,10 +7,16 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
+import { ToastModule } from 'primeng/toast';
+import { PageComponent } from './page/page.component';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { globalErrorInterceptor } from './shared/interceptors/global-error.interceptor';
+import { authInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PageComponent
   ],
   imports: [
     BrowserModule,
@@ -18,9 +24,12 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     CoreModule,
     SharedModule,
-    AuthModule
+    AuthModule,
+    ToastModule
   ],
-  providers: [],
+  providers: [
+    provideHttpClient(withInterceptors([globalErrorInterceptor, authInterceptor]))
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
