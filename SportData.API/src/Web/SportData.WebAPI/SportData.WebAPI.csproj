@@ -22,9 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\SportData.Common.Exceptions\SportData.Common.Exceptions.csproj" />
-    <ProjectReference Include="..\..\Data\SportData.Data.Converters\SportData.Data.Converters.csproj" />
-    <ProjectReference Include="..\..\Data\SportData.Data.Crawlers\SportData.Data.Crawlers.csproj" />
     <ProjectReference Include="..\..\Data\SportData.Data.Seeders\SportData.Data.Seeders.csproj" />
+    <ProjectReference Include="..\..\Data\SportData.Data.ViewModels\SportData.Data.ViewModels.csproj" />
+    <ProjectReference Include="..\..\Services\SportData.Services.Data\SportData.Services.Data.csproj" />
+    <ProjectReference Include="..\..\Services\SportData.Services\SportData.Services.csproj" />
     <ProjectReference Include="..\SportData.WebAPI.Infrastructure\SportData.WebAPI.Infrastructure.csproj" />
   </ItemGroup>
 
