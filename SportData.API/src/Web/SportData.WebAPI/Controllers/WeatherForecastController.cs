@@ -1,11 +1,7 @@
 namespace SportData.WebAPI.Controllers;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SportData.Common.Constants;
-
-[Authorize(Roles = Roles.ADMIN)]
 public class WeatherForecastController : BaseController
 {
     private static readonly string[] Summaries = new[]
@@ -20,8 +16,8 @@ public class WeatherForecastController : BaseController
         _logger = logger;
     }
 
-    [AllowAnonymous]
-    [HttpGet(Name = "GetWeatherForecast")]
+    [HttpGet]
+    [Route("Get")]
     public IEnumerable<WeatherForecast> Get()
     {
         var asd = this.HttpContext.Items["email"];
