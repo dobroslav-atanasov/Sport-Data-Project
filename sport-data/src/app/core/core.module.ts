@@ -7,24 +7,38 @@ import { RouterModule } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { CardModule } from 'primeng/card';
+import { HttpInterceptorProviders } from './interceptors/http.interceptor';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarModule } from 'primeng/sidebar';
 
 @NgModule({
   declarations: [
     HomeComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    NotFoundComponent,
+    SidebarComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
     MenubarModule,
     ButtonModule,
-    InputTextModule
+    InputTextModule,
+    CardModule,
+    SidebarModule
   ],
   exports: [
     HomeComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    SidebarComponent,
+    NotFoundComponent
+  ],
+  providers: [
+    HttpInterceptorProviders,
   ]
 })
 
