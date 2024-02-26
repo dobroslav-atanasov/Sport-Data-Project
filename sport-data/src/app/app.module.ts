@@ -8,28 +8,27 @@ import { CoreModule } from './core/core.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { ToastModule } from 'primeng/toast';
-import { PageComponent } from './page/page.component';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { globalErrorInterceptor } from './shared/interceptors/global-error.interceptor';
-import { authInterceptor } from './shared/interceptors/auth.interceptor';
+import { HttpClientModule } from '@angular/common/http';
+import { ButtonModule } from 'primeng/button';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PageComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
     CoreModule,
     SharedModule,
     AuthModule,
-    ToastModule
+    AdminModule,
+    ToastModule,
+    ButtonModule,
+    HttpClientModule,
+    AppRoutingModule
   ],
-  providers: [
-    provideHttpClient(withInterceptors([globalErrorInterceptor, authInterceptor]))
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
