@@ -1,20 +1,22 @@
-<p-menubar [model]="items">
+<p-menubar *ngIf="!isLoggedIn" [model]="items">
     <ng-template pTemplate="start">
         <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2">
     </ng-template>
 
     <ng-template pTemplate="end">
         <input type="text" pInputText placeholder="Search..." class="mr-2">&nbsp;
-        <p-button label="Logout" icon="pi pi-power-off"></p-button>
     </ng-template>
 </p-menubar>
 
-<!-- <p>header works!</p>
+<p-menubar *ngIf="isLoggedIn" [model]="userItems">
+    <ng-template pTemplate="start">
+        <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2">
+    </ng-template>
 
-<nav>
-    <div>
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>&nbsp;
-        <a routerLink="/auth/register" routerLinkActive="active">Register</a>&nbsp;
-        <a routerLink="/auth/login" routerLinkActive="active">Login</a>&nbsp;
-    </div>
-</nav> -->
+    <ng-template pTemplate="end">
+        <input type="text" pInputText placeholder="Search..." class="mr-2">&nbsp;
+
+        <p-button label="Sign out" icon="pi pi-power-off" routerLink="/auth/logout"></p-button>
+    </ng-template>
+</p-menubar>
+

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Menubar } from 'primeng/menubar';
+import { AuthService } from '../../auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'sd-header',
@@ -9,21 +10,49 @@ import { Menubar } from 'primeng/menubar';
 })
 export class HeaderComponent implements OnInit {
 
+  userItems: MenuItem[] | undefined;
   items: MenuItem[] | undefined;
+
+  constructor(private authService: AuthService,
+    private router: Router) {
+  }
+
+  get isLoggedIn() {
+    return this.authService.isLoggedIn();
+  }
 
   ngOnInit(): void {
     this.items = [
       {
         label: 'Home',
-        routerLink: '/'
+        routerLink: '/',
       },
       {
-        label: 'Register',
-        routerLink: 'auth/register'
+        label: 'Sign up',
+        routerLink: 'auth/register',
       },
       {
-        label: 'Login',
+        label: 'Sign in',
         routerLink: 'auth/login'
+      },
+    ]
+
+    this.userItems = [
+      {
+        label: 'Home',
+        routerLink: '/',
+      },
+      {
+        label: 'Profile',
+        routerLink: 'auth/profile',
+      },
+      {
+        label: 'Account',
+        routerLink: 'auth/account',
+      },
+      {
+        label: 'Users',
+        routerLink: 'admin/users'
       }
     ]
   }

@@ -10,8 +10,7 @@ import { AuthService } from '../services/auth.service';
 
 export class LogoutComponent {
   constructor(private router: Router, private authService: AuthService) { 
-    this.authService.isLoggedIn = false;
-    localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }
