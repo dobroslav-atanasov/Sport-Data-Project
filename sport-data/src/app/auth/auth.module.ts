@@ -12,12 +12,16 @@ import { ButtonModule } from 'primeng/button';
 import { HttpClientModule } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { LogoutComponent } from './logout/logout.component';
+import { ProfileComponent } from './profile/profile.component';
+import { AccountComponent } from './account/account.component';
 
 @NgModule({
   declarations: [
     RegisterComponent,
     LoginComponent,
-    LogoutComponent
+    LogoutComponent,
+    ProfileComponent,
+    AccountComponent
   ],
   imports: [
     CommonModule,
