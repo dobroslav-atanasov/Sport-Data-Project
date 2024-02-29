@@ -13,12 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 using SportData.Common.Constants;
-using SportData.Converters.OlympicGames;
 using SportData.Data.Contexts;
-using SportData.Data.Converters.Countries;
-using SportData.Data.Converters.OlympicGames;
-using SportData.Data.Crawlers.Countries;
-using SportData.Data.Crawlers.Olympedia;
 using SportData.Data.Factories;
 using SportData.Data.Factories.Interfaces;
 using SportData.Data.Models.Entities.SportData;
@@ -148,8 +143,6 @@ public class Program
         });
 
         RegisterServices(services);
-        RegisterCrawlers(services);
-        RegisterConverters(services);
     }
 
     private static void Configure(WebApplication app)
@@ -188,31 +181,6 @@ public class Program
         app.Run();
     }
 
-    private static void RegisterConverters(IServiceCollection services)
-    {
-        services.AddScoped<CountryDataConverter>();
-        services.AddScoped<CountryConverter>();
-        services.AddScoped<NOCConverter>();
-        services.AddScoped<GameConverter>();
-        services.AddScoped<SportDisciplineConverter>();
-        services.AddScoped<VenueConverter>();
-        services.AddScoped<EventConverter>();
-        services.AddScoped<AthleteConverter>();
-        services.AddScoped<ParticipantConverter>();
-        services.AddScoped<ResultConverter>();
-    }
-
-    private static void RegisterCrawlers(IServiceCollection services)
-    {
-        services.AddTransient<CountryDataCrawler>();
-        services.AddTransient<NOCCrawler>();
-        services.AddTransient<GameCrawler>();
-        services.AddTransient<SportDisciplineCrawler>();
-        services.AddTransient<ResultCrawler>();
-        services.AddTransient<AthleteCrawler>();
-        services.AddTransient<VenueCrawler>();
-    }
-
     private static void RegisterServices(IServiceCollection services)
     {
         // Services
@@ -248,5 +216,6 @@ public class Program
         services.AddScoped<ISquadsService, SquadsService>();
         services.AddScoped<IResultsService, ResultsService>();
         services.AddScoped<Services.Data.SportDataDb.Interfaces.ICountriesService, Services.Data.SportDataDb.CountriesService>();
+        services.AddScoped<Services.Data.SportDataDb.Interfaces.IUsersService, Services.Data.SportDataDb.UsersService>();
     }
 }
