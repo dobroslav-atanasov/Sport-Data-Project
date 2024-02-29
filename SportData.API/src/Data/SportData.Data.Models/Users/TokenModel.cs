@@ -6,5 +6,7 @@ public class TokenModel
 
     public string RefreshToken { get; set; }
 
-    public DateTime? Expiration { get; set; }
+    //public int? ExpirationInSeconds { get; set; }
+
+    public string Username { get; set; }
 }
