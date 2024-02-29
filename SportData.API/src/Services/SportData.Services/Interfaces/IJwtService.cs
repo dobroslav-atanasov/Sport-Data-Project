@@ -2,8 +2,8 @@
 
 using System.Security.Claims;
 
-using SportData.Data.Models.Authentication;
 using SportData.Data.Models.Entities.SportData;
+using SportData.Data.Models.Users;
 
 public interface IJwtService
 {
