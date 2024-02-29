@@ -5,13 +5,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using SportData.Common.Constants;
-using SportData.Data.Models.Authentication;
+using SportData.Common.Exceptions;
 using SportData.Data.Models.Entities.SportData;
+using SportData.Data.Models.Users;
 using SportData.Services.Interfaces;
 
 public class JwtService : IJwtService
@@ -40,9 +40,23 @@ public class JwtService : IJwtService
             new(ClaimTypes.Name, user.UserName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(ClaimTypes.Email, user.Email),
-            //new(ClaimTypes.DateOfBirth, user.BirthDate.HasValue ? user.BirthDate.Value.ToString("dd.MM.yyyy") : null),
-            //new(ClaimTypes.Surname, user.LastName),
+            new("user_id", user.Id)
         };
+
+        //if (!string.IsNullOrEmpty(user.FirstName))
+        //{
+        //    claims.Add(new("FirstName", user.FirstName));
+        //}
+
+        //if (!string.IsNullOrEmpty(user.LastName))
+        //{
+        //    claims.Add(new("LastName", user.LastName));
+        //}
+
+        //if (user.BirthDate.HasValue)
+        //{
+        //    claims.Add(new(ClaimTypes.DateOfBirth, user.BirthDate.HasValue ? user.BirthDate.Value.ToString("dd.MM.yyyy") : null));
+        //}
 
         foreach (var role in roles)
         {
@@ -58,11 +72,13 @@ public class JwtService : IJwtService
             expires: DateTime.UtcNow.AddMinutes(int.Parse(this.configuration[GlobalConstants.JWT_TOKEN_VALIDITY_IN_MINUTES])),
             signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
 
-        return new TokenModel
+        var tokenModel = new TokenModel
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            Expiration = token.ValidTo,
+            //ExpirationInSeconds = token.ValidTo.Second,
         };
+
+        return tokenModel;
     }
 
     public ClaimsPrincipal ValidateToken(string token)
@@ -77,14 +93,15 @@ public class JwtService : IJwtService
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = this.configuration[GlobalConstants.JWT_ISSUER],
                 ValidAudience = this.configuration[GlobalConstants.JWT_AUDIENCE],
-                IssuerSigningKey = key
+                IssuerSigningKey = key,
+                ValidateLifetime = false
             }, out SecurityToken validatedToken);
 
             return claimsPrincipal;
         }
         catch (Exception ex)
         {
-            throw new BadHttpRequestException("Invalid token!");
+            throw new BadRequestException("Invalid token!");
         }
     }
 }
