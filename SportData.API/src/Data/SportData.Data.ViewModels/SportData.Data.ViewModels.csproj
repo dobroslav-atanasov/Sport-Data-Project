@@ -6,4 +6,8 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\SportData.Services.Mapper\SportData.Services.Mapper.csproj" />
+  </ItemGroup>
+
 </Project>
