@@ -11,7 +11,7 @@ public static class GlobalConstants
     public const string OLYMPIC_GAMES_CONNECTION_STRING = "OlympicGamesConnectionString";
     public const string SPORT_DATA_CONNECTION_STRING = "SportDataConnectionString";
 
-    public const string AUTOMAPPER_MODELS_ASSEMBLY = "SportData.Data.Models";
+    public const string AUTOMAPPER_MODELS_ASSEMBLY = "SportData.Data.ViewModels";
 
     public const string JWT_KEY = "Jwt:Key";
     public const string JWT_ISSUER = "Jwt:Issuer";

@@ -1,5 +1,6 @@
 namespace SportData.WebAPI;
 
+using System.Reflection;
 using System.Text;
 
 using Asp.Versioning;
@@ -26,6 +27,7 @@ using SportData.Services.Data.CrawlerStorageDb.Interfaces;
 using SportData.Services.Data.OlympicGamesDb;
 using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
+using SportData.Services.Mapper;
 using SportData.Services.Mapper.Profiles;
 using SportData.WebAPI.Infrastructure.Exceptions;
 using SportData.WebAPI.Infrastructure.Middlewares;
@@ -92,6 +94,8 @@ public class Program
 
         // Automapper
         services.AddAutoMapper(typeof(OlympicGamesProfile));
+        MapperConfig.RegisterMapper(Assembly.Load(GlobalConstants.AUTOMAPPER_MODELS_ASSEMBLY));
+
 
         // Databases options
         var crawlerStorageDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()

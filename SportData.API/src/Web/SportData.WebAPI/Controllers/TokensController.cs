@@ -73,16 +73,16 @@ public class TokensController : BaseController
 
         var roles = await this.userManager.GetRolesAsync(user);
         var newToken = this.jwtService.GenerateToken(user, roles);
-        var newRefreshToken = this.jwtService.GenerateRefreshToken();
+        //var newRefreshToken = this.jwtService.GenerateRefreshToken();
 
-        user.RefreshToken = newRefreshToken;
-        await this.userManager.UpdateAsync(user);
+        //user.RefreshToken = newRefreshToken;
+        //await this.userManager.UpdateAsync(user);
 
         var tokenModel = new TokenModel
         {
             AccessToken = newToken.AccessToken,
-            RefreshToken = newRefreshToken,
-            //ExpirationInSeconds = user.RefreshTokenExpiryTime.Second
+            RefreshToken = null,
+            Username = user.UserName
         };
 
         return this.Ok(tokenModel);
