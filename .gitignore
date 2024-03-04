@@ -399,3 +399,5 @@ FodyWeavers.xsd
 /SportData.Angular
 /SportData.API/src/Data/SportData.Data/Migrations
 /SportData.API/src/Web/SportData.WebAPI/appsettings.json
+/SportData.API/src/Applications/SportData.Converters/appsettings.json
+/SportData.API/src/Applications/SportData.Crawlers/appsettings.json
