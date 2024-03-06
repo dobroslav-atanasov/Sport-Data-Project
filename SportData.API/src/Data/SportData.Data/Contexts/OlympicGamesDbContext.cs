@@ -14,27 +14,47 @@ public class OlympicGamesDbContext : DbContext
 
     public virtual DbSet<Athlete> Athletes { get; set; }
 
+    public virtual DbSet<AthleteClub> AthleteClubs { get; set; }
+
+    public virtual DbSet<AthleteType> AthleteTypes { get; set; }
+
     public virtual DbSet<City> Cities { get; set; }
 
-    public virtual DbSet<Country> Countries { get; set; }
+    public virtual DbSet<Club> Clubs { get; set; }
 
     public virtual DbSet<Discipline> Disciplines { get; set; }
 
     public virtual DbSet<Event> Events { get; set; }
 
-    public virtual DbSet<EventVenue> EventVenues { get; set; }
+    public virtual DbSet<EventGenderType> EventGenderTypes { get; set; }
+
+    public virtual DbSet<EventVenue> EventsVenues { get; set; }
+
+    public virtual DbSet<FinishType> FinishTypes { get; set; }
 
     public virtual DbSet<Game> Games { get; set; }
 
+    public virtual DbSet<Gender> Genders { get; set; }
+
     public virtual DbSet<Host> Hosts { get; set; }
 
-    public virtual DbSet<Nationality> Nationalities { get; set; }
+    public virtual DbSet<Medal> Medals { get; set; }
 
     public virtual DbSet<NOC> NOCs { get; set; }
 
-    public virtual DbSet<Participant> Participants { get; set; }
+    public virtual DbSet<NOCPresident> NOCPresidents { get; set; }
+
+    public virtual DbSet<OlympicGameType> OlympicGameTypes { get; set; }
+
+    public virtual DbSet<Participation> Participations { get; set; }
 
     public virtual DbSet<Result> Results { get; set; }
+
+    public virtual DbSet<ResultParticipation> ResultsParticipations { get; set; }
+
+    public virtual DbSet<ResultTeam> ResultsTeams { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Sport> Sports { get; set; }
 
@@ -90,6 +110,36 @@ public class OlympicGamesDbContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<AthleteClub>()
+             .HasKey(ac => new { ac.AthleteId, ac.ClubId });
+
+        builder.Entity<AthleteClub>()
+            .HasOne(ac => ac.Athlete)
+            .WithMany(a => a.AthletesClubs)
+            .HasForeignKey(ac => ac.AthleteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<AthleteClub>()
+            .HasOne(ac => ac.Club)
+            .WithMany(c => c.AthletesClubs)
+            .HasForeignKey(ac => ac.ClubId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EventVenue>()
+            .HasKey(ev => new { ev.EventId, ev.VenueId });
+
+        builder.Entity<EventVenue>()
+            .HasOne(ev => ev.Event)
+            .WithMany(e => e.EventsVenues)
+            .HasForeignKey(ev => ev.EventId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<EventVenue>()
+            .HasOne(ev => ev.Venue)
+            .WithMany(v => v.EventsVenues)
+            .HasForeignKey(ev => ev.VenueId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<Host>()
             .HasKey(h => new { h.CityId, h.GameId });
 
@@ -97,57 +147,78 @@ public class OlympicGamesDbContext : DbContext
             .HasOne(h => h.City)
             .WithMany(c => c.Hosts)
             .HasForeignKey(h => h.CityId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Host>()
             .HasOne(h => h.Game)
             .WithMany(g => g.Hosts)
             .HasForeignKey(h => h.GameId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<EventVenue>()
-             .HasKey(ev => new { ev.EventId, ev.VenueId });
+        builder.Entity<ResultParticipation>()
+            .HasKey(rp => new { rp.ResultId, rp.ParticipationId });
 
-        builder.Entity<EventVenue>()
-            .HasOne(ev => ev.Event)
-            .WithMany(e => e.EventVenues)
-            .HasForeignKey(ev => ev.EventId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.Entity<ResultParticipation>()
+            .HasOne(rp => rp.Result)
+            .WithMany(r => r.ResultsParticipations)
+            .HasForeignKey(rp => rp.ResultId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<EventVenue>()
-            .HasOne(ev => ev.Venue)
-            .WithMany(v => v.EventVenues)
-            .HasForeignKey(ev => ev.VenueId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.Entity<ResultParticipation>()
+            .HasOne(rp => rp.Participation)
+            .WithMany(p => p.ResultsParticipations)
+            .HasForeignKey(rp => rp.ParticipationId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Nationality>()
-            .HasKey(n => new { n.AthleteId, n.NOCId });
+        builder.Entity<ResultTeam>()
+            .HasKey(rt => new { rt.ResultId, rt.TeamId });
 
-        builder.Entity<Nationality>()
-            .HasOne(n => n.Athlete)
-            .WithMany(a => a.Nationalities)
-            .HasForeignKey(n => n.AthleteId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.Entity<ResultTeam>()
+            .HasOne(rt => rt.Result)
+            .WithMany(r => r.ResultsTeams)
+            .HasForeignKey(rt => rt.ResultId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Nationality>()
-            .HasOne(n => n.NOC)
-            .WithMany(noc => noc.Nationalities)
-            .HasForeignKey(n => n.NOCId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.Entity<ResultTeam>()
+            .HasOne(rt => rt.Team)
+            .WithMany(t => t.ResultsTeams)
+            .HasForeignKey(rt => rt.TeamId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Role>()
+            .HasKey(r => new { r.AthleteId, r.AthleteTypeId });
+
+        builder.Entity<Role>()
+            .HasOne(r => r.Athlete)
+            .WithMany(a => a.Roles)
+            .HasForeignKey(r => r.AthleteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Role>()
+            .HasOne(r => r.AthleteType)
+            .WithMany(at => at.Roles)
+            .HasForeignKey(r => r.AthleteTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Squad>()
             .HasKey(s => new { s.ParticipantId, s.TeamId });
 
         builder.Entity<Squad>()
-            .HasOne(s => s.Participant)
+            .HasOne(s => s.Participation)
             .WithMany(p => p.Squads)
             .HasForeignKey(s => s.ParticipantId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Squad>()
             .HasOne(s => s.Team)
             .WithMany(t => t.Squads)
             .HasForeignKey(s => s.TeamId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Event>()
+            .HasOne(e => e.Game)
+            .WithMany(g => g.Events)
+            .HasForeignKey(e => e.GameId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
