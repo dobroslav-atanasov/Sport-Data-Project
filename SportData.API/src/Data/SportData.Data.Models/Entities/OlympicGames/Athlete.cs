@@ -5,152 +5,168 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using global::SportData.Data.Common.Interfaces;
 using global::SportData.Data.Common.Models;
-using global::SportData.Data.Models.Entities.Enumerations;
-using global::SportData.Data.Models.Entities.OlympicGames.Enumerations;
 
 [Table("Athletes", Schema = "dbo")]
 public class Athlete : BaseDeletableEntity<Guid>, IUpdatable<Athlete>
 {
-    public Athlete()
-    {
-        this.Nationalities = new HashSet<Nationality>();
-        this.Participants = new HashSet<Participant>();
-        this.Teams = new HashSet<Team>();
-    }
+    public int Code { get; set; }
 
-    [Required]
-    public int Number { get; set; }
+    public int GenderId { get; set; }
+    public virtual Gender Gender { get; set; }
 
     [Required]
     [MaxLength(200)]
-    public string Name { get; set; }
+    public string Name { get; set; } // Used name
 
     [Required]
     [MaxLength(200)]
-    public string EnglishName { get; set; }
+    public string TranslateName { get; set; }
 
     [MaxLength(200)]
     public string FullName { get; set; }
 
-    public GenderType Gender { get; set; }
-
-    public AthleteType Type { get; set; }
+    [MaxLength(500)]
+    public string OriginalName { get; set; }
 
     [MaxLength(100)]
-    public string Nationality { get; set; }
+    public string Citizenship { get; set; } // Nationality
 
-    [Column(TypeName = "Date")]
     public DateTime? BirthDate { get; set; }
 
-    [Column(TypeName = "Date")]
+    [MaxLength(100)]
+    public string BirthCity { get; set; }
+
+    [MaxLength(100)]
+    public string BirthCountry { get; set; }
+
     public DateTime? DiedDate { get; set; }
 
     [MaxLength(100)]
-    public string BirthPlace { get; set; }
+    public string DiedCity { get; set; }
 
     [MaxLength(100)]
-    public string DiedPlace { get; set; }
+    public string DiedCountry { get; set; }
 
-    public int? Height { get; set; }
+    public int? HeightInCentimeters { get; set; }
 
-    public int? Weight { get; set; }
+    public double? HeightInInches { get; set; }
 
-    [MaxLength(200)]
-    public string Association { get; set; }
+    public int? WeightInKilograms { get; set; }
 
+    public int? WeightInPounds { get; set; }
+
+    [MaxLength(10000)]
     public string Description { get; set; }
 
-    public virtual ICollection<Nationality> Nationalities { get; set; }
+    public virtual ICollection<AthleteClub> AthletesClubs { get; set; } = new HashSet<AthleteClub>();
 
-    public virtual ICollection<Participant> Participants { get; set; }
+    public virtual ICollection<Participation> Participations { get; set; } = new HashSet<Participation>();
 
-    public virtual ICollection<Team> Teams { get; set; }
+    public virtual ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
     public bool IsUpdated(Athlete other)
     {
         var isUpdated = false;
 
-        if (this.Name != other.Name)
+        if (Name != other.Name)
         {
-            this.Name = other.Name;
+            Name = other.Name;
             isUpdated = true;
         }
 
-        if (this.EnglishName != other.EnglishName)
+        if (TranslateName != other.TranslateName)
         {
-            this.EnglishName = other.EnglishName;
+            TranslateName = other.TranslateName;
             isUpdated = true;
         }
 
-        if (this.FullName != other.FullName)
+        if (FullName != other.FullName)
         {
-            this.FullName = other.FullName;
+            FullName = other.FullName;
             isUpdated = true;
         }
 
-        if (this.Gender != other.Gender)
+        if (GenderId != other.GenderId)
         {
-            this.Gender = other.Gender;
+            GenderId = other.GenderId;
             isUpdated = true;
         }
 
-        if (this.Type != other.Type)
+        if (OriginalName != other.OriginalName)
         {
-            this.Type = other.Type;
+            OriginalName = other.OriginalName;
             isUpdated = true;
         }
 
-        if (this.Nationality != other.Nationality)
+        if (Citizenship != other.Citizenship)
         {
-            this.Nationality = other.Nationality;
+            Citizenship = other.Citizenship;
             isUpdated = true;
         }
 
-        if (this.BirthDate != other.BirthDate)
+        if (BirthDate != other.BirthDate)
         {
-            this.BirthDate = other.BirthDate;
+            BirthDate = other.BirthDate;
             isUpdated = true;
         }
 
-        if (this.DiedDate != other.DiedDate)
+        if (DiedDate != other.DiedDate)
         {
-            this.DiedDate = other.DiedDate;
+            DiedDate = other.DiedDate;
             isUpdated = true;
         }
 
-        if (this.BirthPlace != other.BirthPlace)
+        if (BirthCity != other.BirthCity)
         {
-            this.BirthPlace = other.BirthPlace;
+            BirthCity = other.BirthCity;
             isUpdated = true;
         }
 
-        if (this.DiedPlace != other.DiedPlace)
+        if (BirthCountry != other.BirthCountry)
         {
-            this.DiedPlace = other.DiedPlace;
+            BirthCountry = other.BirthCountry;
             isUpdated = true;
         }
 
-        if (this.Height != other.Height)
+        if (DiedCity != other.DiedCity)
         {
-            this.Height = other.Height;
+            DiedCity = other.DiedCity;
             isUpdated = true;
         }
 
-        if (this.Weight != other.Weight)
+        if (DiedCountry != other.DiedCountry)
         {
-            this.Weight = other.Weight;
+            DiedCountry = other.DiedCountry;
             isUpdated = true;
         }
 
-        if (this.Association != other.Association)
+        if (HeightInCentimeters != other.HeightInCentimeters)
         {
-            this.Association = other.Association;
+            HeightInCentimeters = other.HeightInCentimeters;
             isUpdated = true;
         }
 
-        if (this.Description != other.Description)
+        if (HeightInInches != other.HeightInInches)
         {
-            this.Description = other.Description;
+            HeightInInches = other.HeightInInches;
+            isUpdated = true;
+        }
+
+        if (WeightInKilograms != other.WeightInKilograms)
+        {
+            WeightInKilograms = other.WeightInKilograms;
+            isUpdated = true;
+        }
+
+        if (WeightInPounds != other.WeightInPounds)
+        {
+            WeightInPounds = other.WeightInPounds;
+            isUpdated = true;
+        }
+
+        if (Description != other.Description)
+        {
+            Description = other.Description;
             isUpdated = true;
         }
 

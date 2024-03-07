@@ -1,5 +1,6 @@
 ﻿namespace SportData.Data.Models.Entities.OlympicGames;
 
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using global::SportData.Data.Common.Interfaces;

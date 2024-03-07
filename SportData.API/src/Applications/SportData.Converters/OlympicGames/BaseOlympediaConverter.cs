@@ -8,28 +8,23 @@ using SportData.Common.Extensions;
 using SportData.Converters;
 using SportData.Data.Models.Cache;
 using SportData.Data.Models.Converters;
-using SportData.Data.Models.Entities.OlympicGames.Enumerations;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
-using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public abstract class BaseOlympediaConverter : BaseConverter
 {
     public BaseOlympediaConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService
-        , IRegExpService regExpService, INormalizeService normalizeService, IDataCacheService dataCacheService, IOlympediaService olympediaService)
+        , IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService)
         : base(logger, crawlersService, logsService, groupsService, zipService)
     {
         this.RegExpService = regExpService;
         this.NormalizeService = normalizeService;
-        this.DataCacheService = dataCacheService;
         this.OlympediaService = olympediaService;
     }
 
     protected IRegExpService RegExpService { get; }
 
     protected INormalizeService NormalizeService { get; }
-
-    protected IDataCacheService DataCacheService { get; }
 
     protected IOlympediaService OlympediaService { get; }
 
@@ -48,9 +43,9 @@ public abstract class BaseOlympediaConverter : BaseConverter
                 gameType = "Summer";
             }
 
-            var game = this.DataCacheService.GameCacheModels.FirstOrDefault(g => g.Year == gameYear && g.Type == gameType.ToEnum<OlympicGameType>());
+            //var game = this.DataCacheService.GameCacheModels.FirstOrDefault(g => g.Year == gameYear && g.Type == gameType.ToEnum<OlympicGameType>());
 
-            return game;
+            //return game;
         }
 
         return null;
@@ -80,9 +75,9 @@ public abstract class BaseOlympediaConverter : BaseConverter
                 disciplineName = "Canoe Sprint";
             }
 
-            var discipline = this.DataCacheService.DisciplineCacheModels.FirstOrDefault(d => d.Name == disciplineName);
+            //var discipline = this.DataCacheService.DisciplineCacheModels.FirstOrDefault(d => d.Name == disciplineName);
 
-            return discipline;
+            //return discipline;
         }
 
         return null;

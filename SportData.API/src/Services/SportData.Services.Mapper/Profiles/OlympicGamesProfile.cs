@@ -2,9 +2,7 @@
 
 using AutoMapper;
 
-using SportData.Data.Models.Cache;
 using SportData.Data.Models.Converters;
-using SportData.Data.Models.Entities.OlympicGames;
 using SportData.Data.Models.OlympicGames;
 using SportData.Data.Models.OlympicGames.Disciplines;
 
@@ -12,17 +10,17 @@ public class OlympicGamesProfile : Profile
 {
     public OlympicGamesProfile()
     {
-        this.CreateMap<CityCacheModel, City>().ReverseMap();
+        //this.CreateMap<CityCacheModel, City>().ReverseMap();
 
-        this.CreateMap<DisciplineCacheModel, Data.Models.Entities.OlympicGames.Discipline>().ReverseMap();
+        //this.CreateMap<DisciplineCacheModel, Data.Models.Entities.OlympicGames.Discipline>().ReverseMap();
 
-        this.CreateMap<EventCacheModel, Data.Models.Entities.OlympicGames.Event>().ReverseMap();
+        //this.CreateMap<EventCacheModel, Data.Models.Entities.OlympicGames.Event>().ReverseMap();
 
-        this.CreateMap<GameCacheModel, Data.Models.Entities.OlympicGames.Game>().ReverseMap();
+        //this.CreateMap<GameCacheModel, Data.Models.Entities.OlympicGames.Game>().ReverseMap();
 
-        this.CreateMap<NOCCacheModel, NOC>().ReverseMap();
+        //this.CreateMap<NOCCacheModel, NOC>().ReverseMap();
 
-        this.CreateMap<VenueCacheModel, Venue>().ReverseMap();
+        //this.CreateMap<VenueCacheModel, Venue>().ReverseMap();
 
         this.CreateMap<MatchModel, TeamMatch<Basketball>>()
             .ForPath(x => x.Team1.Id, opt => opt.MapFrom(y => y.Team1.Id))

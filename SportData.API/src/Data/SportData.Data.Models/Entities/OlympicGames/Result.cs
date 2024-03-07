@@ -3,28 +3,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-using global::SportData.Data.Common.Interfaces;
 using global::SportData.Data.Common.Models;
 
 [Table("Results", Schema = "dbo")]
-public class Result : BaseDeletableEntity<Guid>, IUpdatable<Result>
+public class Result : BaseDeletableEntity<Guid>
 {
-    public int EventId { get; set; }
+    public Guid EventId { get; set; }
     public virtual Event Event { get; set; }
 
     [Required]
     public string Json { get; set; }
 
-    public bool IsUpdated(Result other)
-    {
-        var isUpdated = false;
+    public virtual ICollection<ResultParticipation> ResultsParticipations { get; set; } = new HashSet<ResultParticipation>();
 
-        if (this.Json != other.Json)
-        {
-            this.Json = other.Json;
-            isUpdated = true;
-        }
-
-        return isUpdated;
-    }
+    public virtual ICollection<ResultTeam> ResultsTeams { get; set; } = new HashSet<ResultTeam>();
 }

@@ -8,7 +8,7 @@ using global::SportData.Data.Common.Interfaces;
 public class Squad : ICreatableEntity, IDeletableEntity
 {
     public Guid ParticipantId { get; set; }
-    public virtual Participant Participant { get; set; }
+    public virtual Participation Participation { get; set; }
 
     public Guid TeamId { get; set; }
     public virtual Team Team { get; set; }

@@ -9,8 +9,8 @@ using SportData.Common.Constants;
 using SportData.Converters;
 using SportData.Data.Models.Entities.Crawlers;
 using SportData.Data.Models.Entities.SportData;
+using SportData.Data.Repositories;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
-using SportData.Services.Data.SportDataDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public class CountryDataConverter : BaseConverter
@@ -18,16 +18,16 @@ public class CountryDataConverter : BaseConverter
     private readonly IRegExpService regExpService;
     private readonly IConfiguration configuration;
     private readonly IHttpService httpService;
-    private readonly ICountriesService countriesService;
+    private readonly SportDataRepository<Country> repository;
 
     public CountryDataConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
-        IRegExpService regExpService, IConfiguration configuration, IHttpService httpService, ICountriesService countriesService)
+        IRegExpService regExpService, IConfiguration configuration, IHttpService httpService, SportDataRepository<Country> repository)
         : base(logger, crawlersService, logsService, groupsService, zipService)
     {
         this.regExpService = regExpService;
         this.configuration = configuration;
         this.httpService = httpService;
-        this.countriesService = countriesService;
+        this.repository = repository;
     }
 
     protected override async Task ProcessGroupAsync(Group group)
@@ -130,9 +130,10 @@ public class CountryDataConverter : BaseConverter
             var flag = await this.httpService.DownloadBytesAsync($"{this.configuration.GetSection(CrawlerConstants.WORLD_COUNTRIES_DOWNLOAD_IMAGE).Value}{coutnryCode}.png");
             country.Flag = flag;
 
-            await File.WriteAllBytesAsync($"D:\\Projects\\Sport-Data-Project\\sport-data\\src\\assets\\flags\\{country.Code}.png", flag);
+            await File.WriteAllBytesAsync($"flags\\{country.Code}.png", flag);
 
-            await this.countriesService.AddOrUpdateAsync(country);
+            await this.repository.AddAsync(country);
+            await this.repository.SaveChangesAsync();
         }
         catch (Exception ex)
         {

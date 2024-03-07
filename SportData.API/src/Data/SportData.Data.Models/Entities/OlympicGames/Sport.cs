@@ -3,18 +3,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-using global::SportData.Data.Common.Interfaces;
 using global::SportData.Data.Common.Models;
-using global::SportData.Data.Models.Entities.OlympicGames.Enumerations;
 
 [Table("Sports", Schema = "dbo")]
-public class Sport : BaseDeletableEntity<int>, IUpdatable<Sport>
+public class Sport : BaseDeletableEntity<int>
 {
-    public Sport()
-    {
-        this.Disciplines = new HashSet<Discipline>();
-    }
-
     [Required]
     [MaxLength(50)]
     public string Name { get; set; }
@@ -24,26 +17,8 @@ public class Sport : BaseDeletableEntity<int>, IUpdatable<Sport>
     public string Code { get; set; }
 
     [Required]
-    public OlympicGameType Type { get; set; }
+    public int OlympicGameTypeId { get; set; }
+    public virtual OlympicGameType OlympicGameType { get; set; }
 
-    public virtual ICollection<Discipline> Disciplines { get; set; }
-
-    public bool IsUpdated(Sport other)
-    {
-        var isUpdated = false;
-
-        if (this.Code != other.Code)
-        {
-            this.Code = other.Code;
-            isUpdated = true;
-        }
-
-        if (this.Type != other.Type)
-        {
-            this.Type = other.Type;
-            isUpdated = true;
-        }
-
-        return isUpdated;
-    }
+    public virtual ICollection<Discipline> Disciplines { get; set; } = new HashSet<Discipline>();
 }
