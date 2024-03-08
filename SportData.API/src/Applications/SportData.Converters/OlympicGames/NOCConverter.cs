@@ -78,8 +78,21 @@ public class NOCConverter : BaseOlympediaConverter
                         noc.FlagCode = flagCode;
                     }
 
-                    await this.repository.AddAsync(noc);
-                    await this.repository.SaveChangesAsync();
+                    var dbNoc = await this.repository.GetAsync(x => x.Name == name && x.Code == code);
+                    if (dbNoc != null)
+                    {
+                        var equals = noc.Equals(dbNoc);
+                        if (!equals)
+                        {
+                            this.repository.Update(dbNoc);
+                            await this.repository.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        await this.repository.AddAsync(noc);
+                        await this.repository.SaveChangesAsync();
+                    }
                 }
             }
         }
