@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,8 +16,10 @@ using SportData.Data.Seeders.OlympicGamesDb;
 using SportData.Services;
 using SportData.Services.Data.CrawlerStorageDb;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
+using SportData.Services.Data.OlympicGamesDb;
+using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
-using SportData.Services.Mapper.Profiles;
+using SportData.Services.Mapper;
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile(GlobalConstants.APP_SETTINGS_FILE, false, true)
@@ -35,8 +39,8 @@ services.AddLogging(config =>
 });
 
 // AUTOMAPPER
-services.AddAutoMapper(typeof(OlympicGamesProfile));
-//MapperConfig.RegisterMapper(Assembly.Load(AppGlobalConstants.AUTOMAPPER_MODELS_ASSEMBLY));
+//services.AddAutoMapper(typeof(OlympicGamesProfile));
+MapperConfig.RegisterMapper(Assembly.Load(GlobalConstants.AUTOMAPPER_MODELS_ASSEMBLY), Assembly.Load(GlobalConstants.AUTOMAPPER_VIEW_MODELS_ASSEMBLY));
 
 // DATABASE
 var crawlerStorageDbOptions = new DbContextOptionsBuilder<CrawlerStorageDbContext>()
@@ -90,9 +94,9 @@ services.AddScoped<ICrawlersService, CrawlersService>();
 services.AddScoped<IGroupsService, GroupsService>();
 services.AddScoped<ILogsService, LogsService>();
 services.AddScoped<SportData.Services.Data.SportDataDb.Interfaces.ICountriesService, SportData.Services.Data.SportDataDb.CountriesService>();
+services.AddScoped<IDataCacheService, DataCacheService>();
 
 services.AddScoped<CountryDataConverter>();
-services.AddScoped<CountryConverter>();
 services.AddScoped<NOCConverter>();
 services.AddScoped<GameConverter>();
 services.AddScoped<SportDisciplineConverter>();
@@ -109,12 +113,12 @@ dbContext.Database.Migrate();
 new OlympicGamesDbSeeder().SeedAsync(serviceProvider).GetAwaiter().GetResult();
 
 //await serviceProvider.GetService<CountryDataConverter>().ConvertAsync(ConverterConstants.COUNTRY_CONVERTER);
-//await serviceProvider.GetService<CountryConverter>().ConvertAsync(ConverterConstants.COUNTRY_CONVERTER);
-await serviceProvider.GetService<NOCConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_NOC_CONVERTER);
+//await serviceProvider.GetService<NOCConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_NOC_CONVERTER);
 //await serviceProvider.GetService<GameConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_GAME_CONVERTER);
 //await serviceProvider.GetService<SportDisciplineConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_SPORT_DISCIPLINE_CONVERTER);
 //await serviceProvider.GetService<VenueConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_VENUE_CONVERTER);
-//await serviceProvider.GetService<EventConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
+await serviceProvider.GetService<EventConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
+
 //await serviceProvider.GetService<AthleteConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_ATHELETE_CONVERTER);
 //await serviceProvider.GetService<ParticipantConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
 //await serviceProvider.GetService<ResultConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
