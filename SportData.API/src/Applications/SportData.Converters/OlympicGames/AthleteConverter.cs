@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SportData.Converters;
 using SportData.Data.Models.Entities.Crawlers;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
+using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public class AthleteConverter : BaseOlympediaConverter
@@ -14,9 +15,9 @@ public class AthleteConverter : BaseOlympediaConverter
     private readonly IDateService dateService;
 
     public AthleteConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
-        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService,
+        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService,
         IDateService dateService)
-        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService)
+        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService, dataCacheService)
     {
         this.dateService = dateService;
     }
