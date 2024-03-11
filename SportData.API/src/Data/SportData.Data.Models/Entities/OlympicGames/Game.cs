@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using global::SportData.Data.Common.Models;
 
 [Table("Games", Schema = "dbo")]
-public class Game : BaseDeletableEntity<int>
+public class Game : BaseDeletableEntity<int>, IEquatable<Game>
 {
     [Required]
     public int Year { get; set; }
@@ -75,4 +75,93 @@ public class Game : BaseDeletableEntity<int>
     public virtual ICollection<Host> Hosts { get; set; } = new HashSet<Host>();
 
     public virtual ICollection<Event> Events { get; set; } = new HashSet<Event>();
+
+    public bool Equals(Game other)
+    {
+        var equals = true;
+        if (this.OfficialName != other.OfficialName)
+        {
+            other.OfficialName = this.OfficialName;
+            equals = false;
+        }
+
+        if (this.OpeningDate != other.OpeningDate)
+        {
+            other.OpeningDate = this.OpeningDate;
+            equals = false;
+        }
+
+        if (this.ClosingDate != other.ClosingDate)
+        {
+            other.ClosingDate = this.ClosingDate;
+            equals = false;
+        }
+
+        if (this.StartCompetitionDate != other.StartCompetitionDate)
+        {
+            other.StartCompetitionDate = this.StartCompetitionDate;
+            equals = false;
+        }
+
+        if (this.EndCompetitionDate != other.EndCompetitionDate)
+        {
+            other.EndCompetitionDate = this.EndCompetitionDate;
+            equals = false;
+        }
+
+        if (this.OpenBy != other.OpenBy)
+        {
+            other.OpenBy = this.OpenBy;
+            equals = false;
+        }
+
+        if (this.Torchbearers != other.Torchbearers)
+        {
+            other.Torchbearers = this.Torchbearers;
+            equals = false;
+        }
+
+        if (this.AthleteOathBy != other.AthleteOathBy)
+        {
+            other.AthleteOathBy = this.AthleteOathBy;
+            equals = false;
+        }
+
+        if (this.JudgeOathBy != other.JudgeOathBy)
+        {
+            other.JudgeOathBy = this.JudgeOathBy;
+            equals = false;
+        }
+
+        if (this.CoachOathBy != other.CoachOathBy)
+        {
+            other.CoachOathBy = this.CoachOathBy;
+            equals = false;
+        }
+
+        if (this.OlympicFlagBearers != other.OlympicFlagBearers)
+        {
+            other.OlympicFlagBearers = this.OlympicFlagBearers;
+            equals = false;
+        }
+
+        if (this.Description != other.Description)
+        {
+            other.Description = this.Description;
+            equals = false;
+        }
+
+        if (this.BidProcess != other.BidProcess)
+        {
+            other.BidProcess = this.BidProcess;
+            equals = false;
+        }
+
+        return equals;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return (obj is Game && this.Equals((Game)obj));
+    }
 }

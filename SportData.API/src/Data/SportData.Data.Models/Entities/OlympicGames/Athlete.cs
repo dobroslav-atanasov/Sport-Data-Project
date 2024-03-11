@@ -3,11 +3,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-using global::SportData.Data.Common.Interfaces;
 using global::SportData.Data.Common.Models;
 
 [Table("Athletes", Schema = "dbo")]
-public class Athlete : BaseDeletableEntity<Guid>, IUpdatable<Athlete>
+public class Athlete : BaseDeletableEntity<Guid>, IEquatable<Athlete>
 {
     public int Code { get; set; }
 
@@ -64,112 +63,117 @@ public class Athlete : BaseDeletableEntity<Guid>, IUpdatable<Athlete>
 
     public virtual ICollection<Role> Roles { get; set; } = new HashSet<Role>();
 
-    public bool IsUpdated(Athlete other)
+    public bool Equals(Athlete other)
     {
-        var isUpdated = false;
+        var equals = true;
 
-        if (Name != other.Name)
+        if (this.Name != other.Name)
         {
-            Name = other.Name;
-            isUpdated = true;
+            other.Name = this.Name;
+            equals = false;
         }
 
-        if (TranslateName != other.TranslateName)
+        if (this.TranslateName != other.TranslateName)
         {
-            TranslateName = other.TranslateName;
-            isUpdated = true;
+            other.TranslateName = this.TranslateName;
+            equals = false;
         }
 
-        if (FullName != other.FullName)
+        if (this.FullName != other.FullName)
         {
-            FullName = other.FullName;
-            isUpdated = true;
+            other.FullName = this.FullName;
+            equals = false;
         }
 
-        if (GenderId != other.GenderId)
+        if (this.GenderId != other.GenderId)
         {
-            GenderId = other.GenderId;
-            isUpdated = true;
+            other.GenderId = this.GenderId;
+            equals = false;
         }
 
-        if (OriginalName != other.OriginalName)
+        if (this.OriginalName != other.OriginalName)
         {
-            OriginalName = other.OriginalName;
-            isUpdated = true;
+            other.OriginalName = this.OriginalName;
+            equals = false;
         }
 
-        if (Citizenship != other.Citizenship)
+        if (this.Citizenship != other.Citizenship)
         {
-            Citizenship = other.Citizenship;
-            isUpdated = true;
+            other.Citizenship = this.Citizenship;
+            equals = false;
         }
 
-        if (BirthDate != other.BirthDate)
+        if (this.BirthDate != other.BirthDate)
         {
-            BirthDate = other.BirthDate;
-            isUpdated = true;
+            other.BirthDate = this.BirthDate;
+            equals = false;
         }
 
-        if (DiedDate != other.DiedDate)
+        if (this.DiedDate != other.DiedDate)
         {
-            DiedDate = other.DiedDate;
-            isUpdated = true;
+            other.DiedDate = this.DiedDate;
+            equals = false;
         }
 
-        if (BirthCity != other.BirthCity)
+        if (this.BirthCity != other.BirthCity)
         {
-            BirthCity = other.BirthCity;
-            isUpdated = true;
+            other.BirthCity = this.BirthCity;
+            equals = false;
         }
 
-        if (BirthCountry != other.BirthCountry)
+        if (this.BirthCountry != other.BirthCountry)
         {
-            BirthCountry = other.BirthCountry;
-            isUpdated = true;
+            other.BirthCountry = this.BirthCountry;
+            equals = false;
         }
 
-        if (DiedCity != other.DiedCity)
+        if (this.DiedCity != other.DiedCity)
         {
-            DiedCity = other.DiedCity;
-            isUpdated = true;
+            other.DiedCity = this.DiedCity;
+            equals = false;
         }
 
-        if (DiedCountry != other.DiedCountry)
+        if (this.DiedCountry != other.DiedCountry)
         {
-            DiedCountry = other.DiedCountry;
-            isUpdated = true;
+            other.DiedCountry = this.DiedCountry;
+            equals = false;
         }
 
-        if (HeightInCentimeters != other.HeightInCentimeters)
+        if (this.HeightInCentimeters != other.HeightInCentimeters)
         {
-            HeightInCentimeters = other.HeightInCentimeters;
-            isUpdated = true;
+            other.HeightInCentimeters = this.HeightInCentimeters;
+            equals = false;
         }
 
-        if (HeightInInches != other.HeightInInches)
+        if (this.HeightInInches != other.HeightInInches)
         {
-            HeightInInches = other.HeightInInches;
-            isUpdated = true;
+            other.HeightInInches = this.HeightInInches;
+            equals = false;
         }
 
-        if (WeightInKilograms != other.WeightInKilograms)
+        if (this.WeightInKilograms != other.WeightInKilograms)
         {
-            WeightInKilograms = other.WeightInKilograms;
-            isUpdated = true;
+            other.WeightInKilograms = this.WeightInKilograms;
+            equals = false;
         }
 
-        if (WeightInPounds != other.WeightInPounds)
+        if (this.WeightInPounds != other.WeightInPounds)
         {
-            WeightInPounds = other.WeightInPounds;
-            isUpdated = true;
+            other.WeightInPounds = this.WeightInPounds;
+            equals = false;
         }
 
-        if (Description != other.Description)
+        if (this.Description != Description)
         {
-            Description = other.Description;
-            isUpdated = true;
+            other.Description = this.Description;
+            equals = false;
         }
 
-        return isUpdated;
+        return equals;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return (obj is Athlete) && this.Equals((Athlete)obj);
     }
 }

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using global::SportData.Data.Common.Models;
 
 [Table("Events", Schema = "dbo")]
-public class Event : BaseDeletableEntity<Guid>
+public class Event : BaseDeletableEntity<Guid>, IEquatable<Event>
 {
     [Required]
     [MaxLength(200)]
@@ -32,10 +32,8 @@ public class Event : BaseDeletableEntity<Guid>
     public int GameId { get; set; }
     public virtual Game Game { get; set; }
 
-    [Column(TypeName = "Date")]
     public DateTime? StartDate { get; set; }
 
-    [Column(TypeName = "Date")]
     public DateTime? EndDate { get; set; }
 
     [Required]
@@ -55,4 +53,63 @@ public class Event : BaseDeletableEntity<Guid>
     public virtual ICollection<EventVenue> EventsVenues { get; set; } = new HashSet<EventVenue>();
 
     public virtual ICollection<Participation> Participations { get; set; } = new HashSet<Participation>();
+
+    public bool Equals(Event other)
+    {
+        var equals = true;
+        if (this.Name != other.Name)
+        {
+            other.Name = this.Name;
+            equals = false;
+        }
+
+        if (this.NormalizedName != other.NormalizedName)
+        {
+            other.NormalizedName = this.NormalizedName;
+            equals = false;
+        }
+
+        if (this.StartDate != other.StartDate)
+        {
+            other.StartDate = this.StartDate;
+            equals = false;
+        }
+
+        if (this.EndDate != other.EndDate)
+        {
+            other.EndDate = this.EndDate;
+            equals = false;
+        }
+
+        if (this.IsTeamEvent != other.IsTeamEvent)
+        {
+            other.IsTeamEvent = this.IsTeamEvent;
+            equals = false;
+        }
+
+        if (this.AdditionalInfo != other.AdditionalInfo)
+        {
+            other.AdditionalInfo = this.AdditionalInfo;
+            equals = false;
+        }
+
+        if (this.Format != other.Format)
+        {
+            other.Format = this.Format;
+            equals = false;
+        }
+
+        if (this.Description != other.Description)
+        {
+            other.Description = this.Description;
+            equals = false;
+        }
+
+        return equals;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return (obj is Event) && this.Equals((Event)obj);
+    }
 }

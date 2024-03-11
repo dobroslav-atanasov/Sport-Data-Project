@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using global::SportData.Data.Common.Models;
 
 [Table("Venues", Schema = "dbo")]
-public class Venue : BaseDeletableEntity<int>
+public class Venue : BaseDeletableEntity<int>, IEquatable<Venue>
 {
     [Required]
     public int Number { get; set; }
@@ -37,4 +37,75 @@ public class Venue : BaseDeletableEntity<int>
     public string Capacity { get; set; }
 
     public virtual ICollection<EventVenue> EventsVenues { get; set; } = new HashSet<EventVenue>();
+
+    public bool Equals(Venue other)
+    {
+        var equals = true;
+        if (this.Name != other.Name)
+        {
+            other.Name = this.Name;
+            equals = false;
+        }
+
+        if (this.City != other.City)
+        {
+            other.City = this.City;
+            equals = false;
+        }
+
+        if (this.Name != other.Name)
+        {
+            other.Name = this.Name;
+            equals = false;
+        }
+
+        if (this.EnglishName != other.EnglishName)
+        {
+            other.EnglishName = this.EnglishName;
+            equals = false;
+        }
+
+        if (this.FullName != other.FullName)
+        {
+            other.FullName = this.FullName;
+            equals = false;
+        }
+
+        if (this.LatitudeCoordinate != other.LatitudeCoordinate)
+        {
+            other.LatitudeCoordinate = this.LatitudeCoordinate;
+            equals = false;
+        }
+
+        if (this.LongitudeCoordinate != other.LongitudeCoordinate)
+        {
+            other.LongitudeCoordinate = this.LongitudeCoordinate;
+            equals = false;
+        }
+
+        if (this.OpenedYear != other.OpenedYear)
+        {
+            other.OpenedYear = this.OpenedYear;
+            equals = false;
+        }
+
+        if (this.DemolishedYear != other.DemolishedYear)
+        {
+            other.DemolishedYear = this.DemolishedYear;
+            equals = false;
+        }
+
+        if (this.Capacity != other.Capacity)
+        {
+            other.Capacity = this.Capacity;
+            equals = false;
+        }
+
+        return equals;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return (obj is Venue) && this.Equals((Venue)obj);
+    }
 }
