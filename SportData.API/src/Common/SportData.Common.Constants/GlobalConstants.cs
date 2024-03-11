@@ -23,4 +23,7 @@ public static class GlobalConstants
     public const string ALLOWED_ORIGINS = "AllowedOrigins";
     public const string API_CORS = "ApiCors";
     public const string BEARER = "Bearer";
+
+    public const double INCHES = 2.54;
+    public const double POUNDS = 2.20462;
 }
