@@ -170,6 +170,7 @@ public class OlympediaService : IOlympediaService
         var venues = this.regExpService
             .Matches(text, @"\/venues\/(\d+)")
             .Select(x => int.Parse(x.Groups[1].Value))?
+            .Distinct()
             .ToList();
 
         return venues;
