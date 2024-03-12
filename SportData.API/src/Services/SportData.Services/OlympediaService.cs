@@ -18,6 +18,21 @@ public class OlympediaService : IOlympediaService
         this.dateService = dateService;
     }
 
+    public List<int> FindClubs(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return new List<int>();
+        }
+
+        var clubs = this.regExpService
+            .Matches(text, @"<a href=""\/affiliations\/(\d+)"">")
+            .Select(x => int.Parse(x.Groups[1].Value))?
+            .ToList();
+
+        return clubs;
+    }
+
     public AthleteModel FindAthlete(string text)
     {
         if (!string.IsNullOrEmpty(text))

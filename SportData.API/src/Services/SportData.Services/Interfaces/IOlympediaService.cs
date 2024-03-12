@@ -15,6 +15,8 @@ public interface IOlympediaService
 
     AthleteModel FindAthlete(string text);
 
+    List<int> FindClubs(string text);
+
     string FindNOCCode(string text);
 
     MedalType FindMedal(string text);
