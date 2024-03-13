@@ -95,6 +95,8 @@ services.AddScoped<IGroupsService, GroupsService>();
 services.AddScoped<ILogsService, LogsService>();
 services.AddScoped<SportData.Services.Data.SportDataDb.Interfaces.ICountriesService, SportData.Services.Data.SportDataDb.CountriesService>();
 services.AddScoped<IDataCacheService, DataCacheService>();
+services.AddScoped<IAthletesService, AthletesService>();
+services.AddScoped<IEventsService, EventsService>();
 
 services.AddScoped<CountryDataConverter>();
 services.AddScoped<NOCConverter>();
@@ -117,8 +119,7 @@ new OlympicGamesDbSeeder().SeedAsync(serviceProvider).GetAwaiter().GetResult();
 //await serviceProvider.GetService<GameConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_GAME_CONVERTER);
 //await serviceProvider.GetService<SportDisciplineConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_SPORT_DISCIPLINE_CONVERTER);
 //await serviceProvider.GetService<VenueConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_VENUE_CONVERTER);
-await serviceProvider.GetService<EventConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
-
-//await serviceProvider.GetService<AthleteConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_ATHELETE_CONVERTER);
+//await serviceProvider.GetService<EventConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
+await serviceProvider.GetService<AthleteConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_ATHELETE_CONVERTER);
 //await serviceProvider.GetService<ParticipantConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
 //await serviceProvider.GetService<ResultConverter>().ConvertAsync(ConverterConstants.OLYMPEDIA_RESULT_CONVERTER);
