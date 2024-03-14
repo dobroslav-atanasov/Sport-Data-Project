@@ -10,7 +10,7 @@ public class Athlete : BaseDeletableEntity<Guid>, IEquatable<Athlete>
 {
     public int Code { get; set; }
 
-    public int GenderId { get; set; }
+    public int? GenderId { get; set; }
     public virtual Gender Gender { get; set; }
 
     [Required]
