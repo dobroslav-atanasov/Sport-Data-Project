@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using SportData.Common.Constants;
 using SportData.Converters.Countries;
 using SportData.Converters.OlympicGames;
+using SportData.Converters.OlympicGames.SportConverters;
+using SportData.Converters.Profiles;
 using SportData.Data.Contexts;
 using SportData.Data.Factories;
 using SportData.Data.Factories.Interfaces;
@@ -39,7 +41,7 @@ services.AddLogging(config =>
 });
 
 // AUTOMAPPER
-//services.AddAutoMapper(typeof(OlympicGamesProfile));
+services.AddAutoMapper(typeof(OlympicGamesProfile));
 MapperConfig.RegisterMapper(Assembly.Load(GlobalConstants.AUTOMAPPER_MODELS_ASSEMBLY), Assembly.Load(GlobalConstants.AUTOMAPPER_VIEW_MODELS_ASSEMBLY));
 
 // DATABASE
@@ -106,6 +108,12 @@ services.AddScoped<EventConverter>();
 services.AddScoped<AthleteConverter>();
 services.AddScoped<ParticipantConverter>();
 services.AddScoped<ResultConverter>();
+services.AddScoped<BasketballConverter>();
+services.AddScoped<SkiingConverter>();
+services.AddScoped<ArcheryConverter>();
+services.AddScoped<GymnasticsConverter>();
+services.AddScoped<AquaticsConverter>();
+services.AddScoped<AthleteConverter>();
 
 var serviceProvider = services.BuildServiceProvider();
 
