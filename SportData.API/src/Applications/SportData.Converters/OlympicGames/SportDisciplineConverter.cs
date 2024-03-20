@@ -1,11 +1,14 @@
 ﻿namespace SportData.Converters.OlympicGames;
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
+using SportData.Common.Extensions;
 using SportData.Data.Models.Entities.Crawlers;
 using SportData.Data.Models.Entities.OlympicGames;
+using SportData.Data.Models.Entities.OlympicGames.Enumerations;
 using SportData.Data.Repositories;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
 using SportData.Services.Data.OlympicGamesDb.Interfaces;
@@ -20,7 +23,7 @@ public class SportDisciplineConverter : BaseOlympediaConverter
     public SportDisciplineConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
         IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService,
         OlympicGamesRepository<Sport> sportRepository, OlympicGamesRepository<Discipline> disciplineRepository)
-        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService)
+        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService, dataCacheService)
     {
         this.dataCacheService = dataCacheService;
         this.sportRepository = sportRepository;
@@ -42,12 +45,13 @@ public class SportDisciplineConverter : BaseOlympediaConverter
                     var name = elements[2].InnerText.Trim();
                     if (name != "Air Sports" && name != "Mountaineering and Climbing" && name != "Art Competitions")
                     {
-                        var olympicGameType = this.dataCacheService.OlympicGameTypes.FirstOrDefault(x => x.Name.Equals(elements[3].InnerText.Trim(), StringComparison.OrdinalIgnoreCase));
+                        var olympicGameTypeEnum = elements[3].InnerText.Trim().ToEnum<OlympicGameTypeEnum>();
+                        //var olympicGameType = this.dataCacheService.OlympicGameTypes.FirstOrDefault(x => x.Name.Equals(elements[3].InnerText.Trim(), StringComparison.CurrentCultureIgnoreCase));
                         var sportCode = this.RegExpService.MatchFirstGroup(elements[2].OuterHtml, @"/sport_groups/(.*?)""");
                         var sport = new Sport
                         {
                             Name = name,
-                            OlympicGameTypeId = olympicGameType.Id,
+                            OlympicGameTypeId = (int)olympicGameTypeEnum,
                             Code = sportCode
                         };
 
