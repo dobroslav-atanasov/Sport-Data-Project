@@ -8,18 +8,21 @@ using SportData.Common.Extensions;
 using SportData.Converters;
 using SportData.Data.Models.Cache;
 using SportData.Data.Models.Converters;
+using SportData.Data.Models.Entities.OlympicGames.Enumerations;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
+using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public abstract class BaseOlympediaConverter : BaseConverter
 {
     public BaseOlympediaConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService
-        , IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService)
+        , IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService)
         : base(logger, crawlersService, logsService, groupsService, zipService)
     {
         this.RegExpService = regExpService;
         this.NormalizeService = normalizeService;
         this.OlympediaService = olympediaService;
+        this.DataCacheService = dataCacheService;
     }
 
     protected IRegExpService RegExpService { get; }
@@ -28,73 +31,76 @@ public abstract class BaseOlympediaConverter : BaseConverter
 
     protected IOlympediaService OlympediaService { get; }
 
-    protected GameCacheModel FindGame(HtmlDocument htmlDocument)
+    protected IDataCacheService DataCacheService { get; }
+
+    protected GameCache GetGameFromDatabase(HtmlDocument htmlDocument)
     {
         var headers = htmlDocument.DocumentNode.SelectSingleNode("//ol[@class='breadcrumb']");
-        var gameMatch = this.RegExpService.Match(headers.OuterHtml, @"<a href=""\/editions\/(?:\d+)"">(\d+)\s*(\w+)\s*Olympics<\/a>");
+        var match = this.RegExpService.Match(headers.OuterHtml, @"<a href=""\/editions\/(?:\d+)"">(\d+)\s*(\w+)\s*Olympics<\/a>");
 
-        if (gameMatch != null)
+        if (match != null)
         {
-            var gameYear = int.Parse(gameMatch.Groups[1].Value);
-            var gameType = gameMatch.Groups[2].Value.Trim();
+            var year = int.Parse(match.Groups[1].Value);
+            var type = match.Groups[2].Value.Trim();
 
-            if (gameType.ToLower() == "equestrian")
+            if (type.ToLower() == "equestrian")
             {
-                gameType = "Summer";
+                type = "Summer";
             }
 
-            //var game = this.DataCacheService.GameCacheModels.FirstOrDefault(g => g.Year == gameYear && g.Type == gameType.ToEnum<OlympicGameType>());
+            var olympicGameType = type.ToEnum<OlympicGameTypeEnum>();// this.DataCacheService.OlympicGameTypes.FirstOrDefault(x => x.Name.Equals(type, StringComparison.CurrentCultureIgnoreCase));
+            var game = this.DataCacheService.Games.FirstOrDefault(g => g.Year == year && g.OlympicGameTypeId == (int)olympicGameType);
 
-            //return game;
+            return game;
         }
 
         return null;
     }
 
-    protected DisciplineCacheModel FindDiscipline(HtmlDocument htmlDocument)
+    protected DisciplineCache GetDisciplineFromDatabase(HtmlDocument htmlDocument)
     {
         var headers = htmlDocument.DocumentNode.SelectSingleNode("//ol[@class='breadcrumb']");
-        var disciplineName = this.RegExpService.MatchFirstGroup(headers.OuterHtml, @"<a href=""\/editions\/[\d]+\/sports\/(?:.*?)"">(.*?)<\/a>");
+        var name = this.RegExpService.MatchFirstGroup(headers.OuterHtml, @"<a href=""\/editions\/[\d]+\/sports\/(?:.*?)"">(.*?)<\/a>");
         var eventName = this.RegExpService.MatchFirstGroup(headers.OuterHtml, @"<li\s*class=""active"">(.*?)<\/li>");
 
-        if (disciplineName != null && eventName != null)
+        if (name != null && eventName != null)
         {
-            if (disciplineName.ToLower() == "wrestling")
+            if (name.ToLower() == "wrestling")
             {
                 if (eventName.ToLower().Contains("freestyle"))
                 {
-                    disciplineName = "Wrestling Freestyle";
+                    name = "Wrestling Freestyle";
                 }
                 else
                 {
-                    disciplineName = "Wrestling Greco-Roman";
+                    name = "Wrestling Greco-Roman";
                 }
             }
-            else if (disciplineName.ToLower() == "canoe marathon")
+            else if (name.ToLower() == "canoe marathon")
             {
-                disciplineName = "Canoe Sprint";
+                name = "Canoe Sprint";
             }
 
-            //var discipline = this.DataCacheService.DisciplineCacheModels.FirstOrDefault(d => d.Name == disciplineName);
+            var discipline = this.DataCacheService.Disciplines.FirstOrDefault(d => d.Name == name);
 
-            //return discipline;
+            return discipline;
         }
 
         return null;
     }
 
-    protected EventModel CreateEventModel(string originalEventName, GameCacheModel gameCacheModel, DisciplineCacheModel disciplineCacheModel)
+    protected EventModel CreateEventModel(string originalEventName, GameCache gameCache, DisciplineCache disciplineCache)
     {
-        if (gameCacheModel != null && disciplineCacheModel != null)
+        if (gameCache != null && disciplineCache != null)
         {
             var eventModel = new EventModel
             {
                 OriginalName = originalEventName,
-                GameId = gameCacheModel.Id,
-                GameYear = gameCacheModel.Year,
-                DisciplineId = disciplineCacheModel.Id,
-                DisciplineName = disciplineCacheModel.Name,
-                Name = this.NormalizeService.NormalizeEventName(originalEventName, gameCacheModel.Year, disciplineCacheModel.Name)
+                GameId = gameCache.Id,
+                GameYear = gameCache.Year,
+                DisciplineId = disciplineCache.Id,
+                DisciplineName = disciplineCache.Name,
+                Name = this.NormalizeService.NormalizeEventName(originalEventName, gameCache.Year, disciplineCache.Name)
             };
 
             var parts = eventModel.Name.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -103,11 +109,11 @@ public abstract class BaseOlympediaConverter : BaseConverter
 
             this.AddInfo(eventModel);
 
-            if (disciplineCacheModel.Name == "Wrestling Freestyle")
+            if (disciplineCache.Name == "Wrestling Freestyle")
             {
                 eventModel.Name = eventModel.Name.Replace("Freestyle", string.Empty);
             }
-            else if (disciplineCacheModel.Name == "Wrestling Greco-Roman")
+            else if (disciplineCache.Name == "Wrestling Greco-Roman")
             {
                 eventModel.Name = eventModel.Name.Replace("Greco-Roman", string.Empty);
             }
@@ -157,7 +163,7 @@ public abstract class BaseOlympediaConverter : BaseConverter
             .SelectSingleNode("//table[@class='table table-striped']/thead/tr")
             .Elements("th")
             .Select(x => x.InnerText.ToLower().Trim())
-            .Where(x => !string.IsNullOrEmpty(x))
+            //.Where(x => !string.IsNullOrEmpty(x))
             .ToList();
 
         var indexes = this.OlympediaService.FindIndexes(headers);
