@@ -10,11 +10,11 @@ public class ConvertOptions
 
     //public IOrderedEnumerable<Document> Documents { get; set; }
 
-    public GameCacheModel Game { get; set; }
+    public GameCache Game { get; set; }
 
-    public DisciplineCacheModel Discipline { get; set; }
+    public DisciplineCache Discipline { get; set; }
 
-    public EventCacheModel Event { get; set; }
+    public EventCache Event { get; set; }
 
     //public TableModel StandingTable { get; set; }
 
