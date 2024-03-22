@@ -14,7 +14,7 @@ public class MatchInputModel
 
     public int Year { get; set; }
 
-    public int EventId { get; set; }
+    public Guid EventId { get; set; }
 
     public bool IsTeam { get; set; }
 
