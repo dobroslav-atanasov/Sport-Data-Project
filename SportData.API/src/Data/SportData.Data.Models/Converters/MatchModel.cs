@@ -15,7 +15,7 @@ public class MatchModel
 
     public int ResultId { get; set; }
 
-    public MedalType Medal { get; set; }
+    public MedalTypeEnum Medal { get; set; }
 
     public string Info { get; set; }
 
