@@ -10,7 +10,7 @@ public class TableModel
 
     public string Html { get; set; }
 
-    public int EventId { get; set; }
+    public Guid EventId { get; set; }
 
     public HtmlDocument HtmlDocument
     {
