@@ -11,6 +11,7 @@ using SportData.Data.Models.Entities.Crawlers;
 using SportData.Data.Models.Entities.OlympicGames;
 using SportData.Data.Repositories;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
+using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public class NOCConverter : BaseOlympediaConverter
@@ -18,8 +19,9 @@ public class NOCConverter : BaseOlympediaConverter
     private readonly OlympicGamesRepository<NOC> repository;
 
     public NOCConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
-        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, OlympicGamesRepository<NOC> repository)
-        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService)
+        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService,
+        OlympicGamesRepository<NOC> repository)
+        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService, dataCacheService)
     {
         this.repository = repository;
     }
