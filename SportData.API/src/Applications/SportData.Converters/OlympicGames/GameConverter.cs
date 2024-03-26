@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SportData.Common.Extensions;
 using SportData.Data.Models.Entities.Crawlers;
 using SportData.Data.Models.Entities.OlympicGames;
+using SportData.Data.Models.Entities.OlympicGames.Enumerations;
 using SportData.Data.Repositories;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
 using SportData.Services.Data.OlympicGamesDb.Interfaces;
@@ -21,7 +22,7 @@ public class GameConverter : BaseOlympediaConverter
     public GameConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
         IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService,
         OlympicGamesRepository<Game> gameRepository, OlympicGamesRepository<City> cityRepository)
-        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService)
+        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService, dataCacheService)
     {
         this.dataCacheService = dataCacheService;
         this.gameRepository = gameRepository;
@@ -39,7 +40,8 @@ public class GameConverter : BaseOlympediaConverter
             if (match != null)
             {
                 var year = int.Parse(match.Groups[1].Value);
-                var olympicGameTypeId = this.dataCacheService.OlympicGameTypes.FirstOrDefault(x => x.Name.Equals(match.Groups[2].Value.Trim(), StringComparison.CurrentCultureIgnoreCase)).Id;
+                var olympicGameTypeEnum = match.Groups[2].Value.Trim().ToEnum<OlympicGameTypeEnum>();
+                //var olympicGameTypeId = this.dataCacheService.OlympicGameTypes.FirstOrDefault(x => x.Name.Equals(match.Groups[2].Value.Trim(), StringComparison.CurrentCultureIgnoreCase)).Id;
                 var numberMatch = this.RegExpService.Match(document.DocumentNode.OuterHtml, @"<th>Number and Year<\/th>\s*<td>\s*([IVXLC]+)\s*\/(.*?)<\/td>");
                 var hostCityMatch = this.RegExpService.Match(document.DocumentNode.OuterHtml, @"<tr>\s*<th>Host city<\/th>\s*<td>\s*([\w'\-\s.]+),\s*([\w'\-\s]+)");
                 var hostCityName = this.NormalizeService.NormalizeHostCityName(hostCityMatch?.Groups[1].Value.Trim());
@@ -55,7 +57,7 @@ public class GameConverter : BaseOlympediaConverter
                 var game = new Game
                 {
                     Year = year,
-                    OlympicGameTypeId = olympicGameTypeId,
+                    OlympicGameTypeId = (int)olympicGameTypeEnum,
                     Number = numberMatch?.Groups[1].Value.Trim(),
                     OfficialName = this.SetOfficialName(hostCityName, year),
                     OpenBy = openByMatch != null ? this.RegExpService.CutHtml(openByMatch.Groups[1].Value) : null,
@@ -116,7 +118,7 @@ public class GameConverter : BaseOlympediaConverter
                     });
                 }
 
-                var dbGame = await this.gameRepository.GetAsync(x => x.Year == year && x.OlympicGameTypeId == olympicGameTypeId);
+                var dbGame = await this.gameRepository.GetAsync(x => x.Year == year && x.OlympicGameTypeId == (int)olympicGameTypeEnum);
                 if (dbGame != null)
                 {
                     var equals = game.Equals(dbGame);
