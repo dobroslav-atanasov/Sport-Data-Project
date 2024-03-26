@@ -9,6 +9,7 @@ using SportData.Data.Models.Entities.Crawlers;
 using SportData.Data.Models.Entities.OlympicGames;
 using SportData.Data.Repositories;
 using SportData.Services.Data.CrawlerStorageDb.Interfaces;
+using SportData.Services.Data.OlympicGamesDb.Interfaces;
 using SportData.Services.Interfaces;
 
 public class VenueConverter : BaseOlympediaConverter
@@ -16,8 +17,9 @@ public class VenueConverter : BaseOlympediaConverter
     private readonly OlympicGamesRepository<Venue> repository;
 
     public VenueConverter(ILogger<BaseConverter> logger, ICrawlersService crawlersService, ILogsService logsService, IGroupsService groupsService, IZipService zipService,
-        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, OlympicGamesRepository<Venue> repository)
-        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService)
+        IRegExpService regExpService, INormalizeService normalizeService, IOlympediaService olympediaService, IDataCacheService dataCacheService,
+        OlympicGamesRepository<Venue> repository)
+        : base(logger, crawlersService, logsService, groupsService, zipService, regExpService, normalizeService, olympediaService, dataCacheService)
     {
         this.repository = repository;
     }
